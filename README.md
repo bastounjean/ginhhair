@@ -62,7 +62,7 @@ Un nom de domaine (`ginhair.fr`) reste payant (~10 €/an) mais n'est pas obliga
 | `DATABASE_URL`, `DATABASE_TOKEN` | Base Turso. Sans elles : fichier local `data/barber.db` |
 | `BREVO_API_KEY`, `MAIL_FROM_EMAIL`, `MAIL_FROM_NAME` | Envoi via Brevo |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_SECURE` | Alternative : envoi par SMTP (Gmail, etc.) |
-| `BARBER_<NOM>_EMAIL`, `BARBER_<NOM>_PASSWORD` | Comptes barbers, lus **au premier démarrage** |
+| `BARBER_<NOM>_EMAIL`, `BARBER_<NOM>_PASSWORD` | Comptes barbers, relus à chaque démarrage (changer la variable sur Render met le compte à jour) |
 | `SITE_URL` | Adresse publique pour les liens dans les mails (détectée automatiquement sur Render) |
 | `TZ` | Fuseau du planning (Europe/Paris par défaut) |
 

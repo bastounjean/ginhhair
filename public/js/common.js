@@ -11,6 +11,10 @@ const NAV = [
 
 const CLUB_INSTA = 'ginhair38';
 const instaUrl = (h) => `https://www.instagram.com/${h}/`;
+// Réels Instagram montrés au hasard sur l'accueil : coller ici les liens (« Copier le lien » dans Instagram).
+// Tant que la liste est vide, la fenêtre n'apparaît pas.
+const REELS = [
+];
 const snapUrl = (h) => `https://www.snapchat.com/add/${h}`;
 
 // Les photos des coupes. Pour en ajouter : déposer le fichier dans public/img et l'ajouter ici.

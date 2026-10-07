@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>GI N' HAIR · Barber club étudiant à Grenoble</title>
-  <meta name="description" content="Trois étudiants en Génie Industriel, zéro diplôme de coiffure, des dégradés quand même très propres. Prends RDV en ligne.">
+  <meta name="description" content="Le Barber Club le plus frais de l'INP : trois étudiants, zéro diplôme de coiffure, des dégradés quand même très propres. Prends RDV en ligne.">
   <link rel="icon" href="/img/favicon.png">
   <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -14,11 +14,11 @@
     <div class="wrap hero-grid">
       <div>
         <span class="stamp">0 diplôme · 100 % dégradé</span>
-        <h1 class="outlined">Le barber le moins sérieux de Grenoble.</h1>
+        <h1 class="outlined">Le Barber Club le plus frais de <span style="white-space:nowrap">l'<span class="inp">INP</span></span></h1>
         <p class="lead">
-          GI N' HAIR, c'est trois étudiants en Génie Industriel qui ont appliqué le <b>Lean Management</b> à vos cheveux.
-          On a supprimé le gaspillage, les temps d'attente et les diplômes. Il ne reste que la tondeuse, la bonne ambiance
-          et un taux de satisfaction calculé à la main sur un tableur.
+          GI N' HAIR, c'est <b>trois Géhissss</b> qui ont troqué la calculatrice contre la tondeuse.
+          Pas de salon, pas de diplôme de coiffure, juste une chaise, une cape, de la bonne musique
+          et une confiance en nous franchement disproportionnée.
         </p>
         <p class="muted">Résultat garanti* <small>(*garantie non contractuelle, mais les cheveux repoussent toujours)</small></p>
         <div class="ctas">
@@ -59,6 +59,22 @@
 
   <section class="section" style="padding-top:0">
     <div class="wrap">
+      <div class="card insta-card">
+        <div>
+          <h2 style="margin-bottom:.2em">Suis-nous sur Insta</h2>
+          <p style="margin:0">Les dernières coupes, les coulisses, et parfois des vidéos dont on n'est pas fiers.</p>
+        </div>
+        <a class="btn insta-btn" id="club-insta" target="_blank" rel="noopener">📸 @ginhair38</a>
+        <div class="stalk">
+          <p class="marker" style="margin:0 0 10px;font-size:1.15rem">Pour stalker ton barber avant de lui confier ta tête :</p>
+          <div class="handles" id="handles"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
       <div class="card" style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between">
         <div style="max-width:620px">
           <h2 style="margin-bottom:.2em">Tu t'ennuies en amphi ?</h2>
@@ -74,6 +90,10 @@
 <script>
   // Défilé infini : toutes les photos de l'équipe, doublées pour boucler
   const photos = Object.values(TEAM).flatMap((b) => b.photos.map((p) => [p[0], `${p[1]} · ${b.name}`]));
+  $('#club-insta').href = instaUrl(CLUB_INSTA);
+  $('#handles').innerHTML = Object.values(TEAM).map((b, i) =>
+    `<a class="handle" style="--c:${b.color};--r:${[-3, 2, -1][i]}deg" href="${instaUrl(b.insta)}" target="_blank" rel="noopener">
+       <b>${b.name}</b><span>@${esc(b.insta)}</span></a>`).join('');
   const track = $('#track');
   [...photos, ...photos].forEach((p, i) =>
     track.appendChild(polaroid(p, i, () => lightbox(photos, i % photos.length))));

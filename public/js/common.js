@@ -4,38 +4,46 @@ const NAV = [
   ['/', 'Accueil'],
   ['/equipe', "L'équipe"],
   ['/rdv', 'Rendez-vous'],
+  ['/debuts', 'Les débuts'],
   ['/jeu', 'Mini-jeu'],
   ['/espace', 'Mon espace', 'cta'],
 ];
+
+const CLUB_INSTA = 'ginhair38';
+const instaUrl = (h) => `https://www.instagram.com/${h}/`;
 
 // Les photos des coupes. Pour en ajouter : déposer le fichier dans public/img et l'ajouter ici.
 const TEAM = {
   anton: {
     name: 'Anton', color: '#c8202f',
     title: 'Le maître du dégradé (autoproclamé)',
+    insta: 'anton_flz',
     diploma: ['Diplôme de désherbage animalier', 'Mention « le mouton n’a presque rien senti »'],
-    bio: "Anton a découvert sa vocation en tondant le chien de sa grand-mère en 2014. Le chien s'en est remis. Depuis, il applique la méthode des 5S à chaque crâne : Séparer, Situer, Scintiller, Standardiser… et Shampooing.",
+    bio: "Anton a découvert sa vocation en tondant le chien de sa grand-mère en 2014. Le chien s'en est remis. Depuis, il traite chaque crâne avec tout le respect qu'il n'a pas eu pour ce pauvre caniche.",
     stats: [['Spécialité', 'Le mid fade'], ['Arme favorite', 'Tondeuse sabot 1,5'], ['Cheveux coupés', '≈ 4,2 millions'], ['Client perdu', 'Aucun (confirmé)']],
     photos: [],
   },
   gatien: {
     name: 'Gatien', color: '#2456a6',
     title: 'Le chirurgien de la nuque',
+    insta: 'gatien.clv',
     diploma: ['CAP Tonte de pelouse synthétique', 'Option : taille de haies en forme de dauphin'],
-    bio: "Gatien a passé trois ans à optimiser une chaîne logistique en cours, puis il a réalisé que la vraie chaîne logistique, c'est le cheveu qui part du crâne jusqu'au balai. Il trace des contours plus droits que ses diagrammes de Gantt.",
+    bio: "Gatien entretient une relation presque mystique avec la ligne droite. Ses contours sont si nets que les règles de la résidence viennent lui demander conseil. Il parle peu pendant la coupe : il se concentre (ou il dort debout, on n'a jamais tranché).",
     stats: [['Spécialité', 'Les contours au millimètre'], ['Arme favorite', 'Le rasoir de précision'], ['Temps moyen', '32 min (avec débrief)'], ['Niveau de stress', 'Zéro, c’est lui qui tient la tondeuse']],
     photos: [],
   },
   baptiste: {
     name: 'Baptiste', color: '#2f8f5b',
-    title: 'Le Lean manager du cuir chevelu',
-    diploma: ['Master en optimisation des flux capillaires', 'Spécialité AMDEC du cheveu rebelle (non reconnu par l’État)'],
-    bio: "Baptiste a calculé que 87 % des étudiants de Grenoble avaient une coupe sous-optimale. Il a donc décidé d'agir. Il a mis en place un Kanban pour ses clients, une roue de Deming pour ses dégradés et un indicateur de satisfaction basé sur le nombre de selfies pris après la coupe.",
+    title: 'Le dégradeur en série',
+    insta: 'baptistee__jean',
+    diploma: ['Master en optimisation des flux capillaires', 'Spécialité cheveu rebelle (non reconnu par l’État)'],
+    bio: "Baptiste a calculé que 87 % des étudiants de Grenoble avaient une coupe à revoir. Il a donc décidé d'agir. Sa seule mesure de satisfaction : le nombre de selfies que tu prends en sortant de sa chaise.",
     stats: [['Spécialité', 'Le taper fade texturé'], ['Arme favorite', 'La tondeuse et le peigne'], ['Taux de retour client', '100 % (les cheveux repoussent)'], ['Diplômes réels', '0, mais beaucoup d’ambition']],
     photos: [
       ['coupe1.jpg', 'Taper blond platine'], ['coupe2.jpg', 'Nuque nette'], ['coupe3.jpg', 'Mèche maîtrisée'],
       ['coupe4.jpg', 'Dégradé bas'], ['coupe5.jpg', 'Texture naturelle'], ['coupe6.jpg', 'Mid fade + bière'],
       ['coupe7.jpg', 'Burst fade bouclé'], ['coupe8.jpg', 'Blond surfeur'],
+      ['coupe9.jpg', 'Taper texturé'], ['coupe10.jpg', 'Mid fade du soir'],
     ],
   },
 };
@@ -95,7 +103,8 @@ function renderChrome() {
     <div class="pole"></div>
     <div class="wrap">
       <div><b class="display" style="color:#fff;font-size:1.3rem">GI N' HAIR</b><br>
-      <small>Barber club étudiant · Génie Industriel · Grenoble</small></div>
+      <small>Barber club étudiant · Grenoble INP</small></div>
+      <div><a class="insta" href="${instaUrl(CLUB_INSTA)}" target="_blank" rel="noopener">📸 @${CLUB_INSTA}</a></div>
       <div><small>Aucun diplôme. Beaucoup de passion. Les cheveux repoussent.</small></div>
       <div><a href="/barber">Espace barbers</a></div>
     </div>`;

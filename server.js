@@ -51,6 +51,10 @@ const SCHEMA = `
     start TEXT, duration INTEGER DEFAULT 30, kind TEXT, status TEXT DEFAULT 'pending',
     message TEXT, reply TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
+  CREATE TABLE IF NOT EXISTS game_players (
+    id INTEGER PRIMARY KEY, pseudo TEXT UNIQUE COLLATE NOCASE, secret_hash TEXT,
+    total REAL DEFAULT 0, updated_at INTEGER
+  );
   CREATE TABLE IF NOT EXISTS outbox (
     id INTEGER PRIMARY KEY, recipient TEXT, subject TEXT, body TEXT, sent INTEGER DEFAULT 0,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
@@ -365,6 +369,37 @@ app.post('/api/barber/appointments/:id/:action', needBarber, async (req, res) =>
 });
 app.get('/api/barber/outbox', needBarber, async (req, res) => {
   res.json(await db.prepare('SELECT * FROM outbox ORDER BY id DESC LIMIT 30').all());
+});
+
+// --- Classement du Tond'Clicker (on n'affiche que les rangs, jamais les scores)
+const sha = (x) => crypto.createHash('sha256').update(x).digest('hex');
+app.post('/api/game/join', async (req, res) => {
+  const pseudo = String((req.body || {}).pseudo || '').trim();
+  if (!/^[\p{L}\p{N} _.\-']{2,16}$/u.test(pseudo)) return res.status(400).json({ error: 'Pseudo : 2 à 16 caractères (lettres, chiffres, espace, _ . -).' });
+  if (await db.prepare('SELECT id FROM game_players WHERE pseudo = ?').get(pseudo))
+    return res.status(409).json({ error: 'Ce pseudo est déjà pris, trouve plus original.' });
+  const secret = crypto.randomBytes(24).toString('hex');
+  const r = await db.prepare('INSERT INTO game_players (pseudo, secret_hash, total, updated_at) VALUES (?, ?, 0, ?)').run(pseudo, sha(secret), Date.now());
+  res.json({ id: r.lastInsertRowid, secret, pseudo });
+});
+app.post('/api/game/score', async (req, res) => {
+  const { id, secret, total } = req.body || {};
+  const n = Number(total);
+  if (!id || !secret || !Number.isFinite(n) || n < 0 || n > 1e15) return res.status(400).json({ error: 'Score invalide.' });
+  const r = await db.prepare('UPDATE game_players SET total = MAX(total, ?), updated_at = ? WHERE id = ? AND secret_hash = ?')
+    .run(n, Date.now(), Number(id), sha(String(secret)));
+  if (!r.changes) return res.status(404).json({ error: 'Joueur inconnu.' });
+  res.json({ ok: true });
+});
+app.get('/api/game/ranking', async (req, res) => {
+  const top = await db.prepare('SELECT id, pseudo FROM game_players WHERE total > 0 ORDER BY total DESC, updated_at ASC LIMIT 10').all();
+  const out = { top: top.map((p, i) => ({ rank: i + 1, pseudo: p.pseudo, id: p.id })), players: (await db.prepare('SELECT COUNT(*) AS n FROM game_players WHERE total > 0').get()).n };
+  const me = Number(req.query.id);
+  if (me) {
+    const row = await db.prepare('SELECT total, updated_at FROM game_players WHERE id = ?').get(me);
+    if (row) out.myRank = (await db.prepare('SELECT COUNT(*) AS n FROM game_players WHERE total > ? OR (total = ? AND updated_at < ?)').get(row.total, row.total, row.updated_at)).n + 1;
+  }
+  res.json(out);
 });
 
 setup().then(() => app.listen(PORT, () => console.log(`GI N' HAIR en ligne sur ${SITE_URL}`)));

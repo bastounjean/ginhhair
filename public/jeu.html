@@ -59,6 +59,21 @@
         <div id="shop"></div>
         <button class="btn small ghost" id="reset" style="margin-top:10px">Recommencer à zéro</button>
       </div>
+
+      <div class="card ranking" style="grid-column:1 / -1">
+        <h3>🏆 Classement en direct</h3>
+        <p class="muted" style="margin-top:0">Pas de scores affichés, juste l'humiliation du rang. Mis à jour toutes les 10 secondes.</p>
+        <form id="join" style="display:none">
+          <label for="pseudo">Ton pseudo pour entrer dans le classement</label>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <input id="pseudo" maxlength="16" placeholder="Ex : Tondeur2000" style="flex:1;min-width:180px">
+            <button class="btn small">Rejoindre</button>
+          </div>
+          <p class="error" id="join-err"></p>
+        </form>
+        <p id="me-rank" class="rank" style="display:none"></p>
+        <ol class="podium" id="podium"></ol>
+      </div>
     </div>
   </div>
 </main>
@@ -202,6 +217,37 @@
     S = { score: 0, total: 0, clients: 0, cuts: 0, owned: {} };
     save(); render();
   };
+  // Classement en direct
+  let player = null;
+  try { player = JSON.parse(localStorage.getItem('tondclicker-player') || 'null'); } catch {}
+  const MEDALS = ['🥇', '🥈', '🥉'];
+  async function sync() {
+    try {
+      if (player) await api('/api/game/score', { body: { id: player.id, secret: player.secret, total: Math.floor(S.total) } });
+      const r = await api('/api/game/ranking' + (player ? `?id=${player.id}` : ''));
+      $('#podium').innerHTML = r.top.length
+        ? r.top.map((p) => `<li class="${player && p.id === player.id ? 'me' : ''}"><span>${MEDALS[p.rank - 1] || p.rank + '.'}</span> ${esc(p.pseudo)}</li>`).join('')
+        : '<li class="muted">Personne pour l’instant. La première place t’attend.</li>';
+      if (player && r.myRank) {
+        $('#me-rank').style.display = '';
+        $('#me-rank').textContent = `${player.pseudo}, tu es n°${r.myRank} sur ${r.players} tondeur${r.players > 1 ? 's' : ''}`;
+      }
+    } catch (e) { /* pas grave, on réessaie au prochain tour */ }
+  }
+  $('#join').style.display = player ? 'none' : '';
+  $('#join').onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+      player = await api('/api/game/join', { body: { pseudo: $('#pseudo').value } });
+      try { localStorage.setItem('tondclicker-player', JSON.stringify(player)); } catch {}
+      $('#join').style.display = 'none';
+      toast(`Bienvenue dans le classement, ${player.pseudo} !`);
+      sync();
+    } catch (err) { $('#join-err').textContent = err.message; }
+  };
+  sync();
+  setInterval(sync, 10000);
+
   render();
 </script>
 </body>

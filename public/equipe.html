@@ -32,6 +32,7 @@
         <h2 style="margin:0">${b.name}</h2>
         <p class="marker" style="color:${b.color};margin:.2em 0 0">${esc(b.title)}</p>
         <a class="insta sticker" href="${instaUrl(b.insta)}" target="_blank" rel="noopener">📸 @${esc(b.insta)}<small>slide dans ses DM (pour un RDV, hein)</small></a>
+        <a class="snap sticker" href="${snapUrl(b.snap)}" target="_blank" rel="noopener">👻 ${esc(b.snap)}<small>ajoute-le, il répond plus vite que par mail</small></a>
         <div class="diploma"><b>${esc(b.diploma[0])}</b>${esc(b.diploma[1])}</div>
         <p>${esc(b.bio)}</p>
         <ul class="stats">${b.stats.map(([k, v]) => `<li><span class="muted">${esc(k)}</span><b>${esc(v)}</b></li>`).join('')}</ul>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rendez-vous · GI N' HAIR</title>
+  <link rel="icon" href="/img/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<main class="section">
+  <div class="wrap">
+    <h1 class="outlined">Prendre rendez-vous</h1>
+    <p class="lead">Clique sur un créneau coloré pour faire ta demande. Chaque couleur, c'est un barber. Tu peux masquer ceux qui ne t'intéressent pas (on ne le prendra pas mal… enfin presque).</p>
+    <div id="login-hint" class="card" style="display:none;margin:18px 0;padding:16px 20px">
+      👋 Pour réserver, il faut un compte (ça prend 20 secondes). <a href="/espace?next=/rdv"><b>Se connecter ou s'inscrire</b></a>
+    </div>
+
+    <div class="split" style="margin-top:20px">
+      <div id="planning"></div>
+
+      <aside class="card">
+        <h3>Aucun créneau ne te va ?</h3>
+        <p class="muted" style="margin-top:0">Propose-nous ton horaire. Le barber choisi (ou le premier dispo) accepte ou refuse, et tu reçois un mail.</p>
+        <form id="propose">
+          <label for="p-barber">Barber</label>
+          <select id="p-barber"><option value="">Peu importe, le premier dispo</option></select>
+          <div class="row">
+            <div><label for="p-date">Date</label><input type="date" id="p-date" required></div>
+            <div><label for="p-time">Heure</label><input type="time" id="p-time" step="900" required></div>
+          </div>
+          <label for="p-dur">Prestation</label>
+          <select id="p-dur">
+            <option value="30">Coupe (30 min)</option>
+            <option value="45">Coupe + contours barbe (45 min)</option>
+            <option value="60">Opération sauvetage capillaire (1 h)</option>
+          </select>
+          <label for="p-msg">Un mot pour le barber ?</label>
+          <textarea id="p-msg" placeholder="Ex : dégradé bas, je veux ressembler à la photo 3"></textarea>
+          <p class="error" id="p-err"></p>
+          <button class="btn" style="width:100%">Proposer ce créneau</button>
+        </form>
+      </aside>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="card">
+      <h3 id="m-title">Réserver</h3>
+      <p id="m-text"></p>
+      <label for="m-msg">Un mot pour le barber ? (facultatif)</label>
+      <textarea id="m-msg" placeholder="Ex : comme d'hab, mais plus court"></textarea>
+      <p class="error" id="m-err"></p>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+        <button class="btn ghost small" id="m-cancel">Annuler</button>
+        <button class="btn small" id="m-ok">Envoyer la demande</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="/js/common.js"></script>
+<script src="/js/planning.js"></script>
+<script>
+  let me = null;
+  let current = null;
+  const modal = $('#modal');
+
+  const planning = Planning({
+    el: $('#planning'),
+    onSlot(slot) {
+      if (slot.status !== 'open') return toast('Ce créneau est déjà demandé par quelqu’un.');
+      if (!me) return (location.href = '/espace?next=/rdv');
+      current = slot;
+      $('#m-title').textContent = `RDV avec ${slot.barber}`;
+      $('#m-text').innerHTML = `<b>${fmtWhen(slot.start)}</b> · ${slot.duration} min`;
+      $('#m-err').textContent = '';
+      $('#m-msg').value = '';
+      modal.classList.add('open');
+    },
+  });
+
+  $('#m-cancel').onclick = () => modal.classList.remove('open');
+  modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('open'); };
+  $('#m-ok').onclick = async () => {
+    try {
+      await api('/api/appointments', { body: { slot_id: current.id, message: $('#m-msg').value } });
+      modal.classList.remove('open');
+      toast('Demande envoyée ! Tu recevras un mail dès que le barber répond.');
+      planning.reload();
+    } catch (e) { $('#m-err').textContent = e.message; }
+  };
+
+  $('#p-date').min = isoDay(new Date());
+  $('#propose').onsubmit = async (e) => {
+    e.preventDefault();
+    if (!me) return (location.href = '/espace?next=/rdv');
+    try {
+      await api('/api/appointments', { body: {
+        barber_id: $('#p-barber').value || null,
+        start: `${$('#p-date').value}T${$('#p-time').value}`,
+        duration: $('#p-dur').value,
+        message: $('#p-msg').value,
+      } });
+      e.target.reset();
+      $('#p-err').textContent = '';
+      toast('Proposition envoyée ! Réponse par mail.');
+    } catch (err) { $('#p-err').textContent = err.message; }
+  };
+
+  (async () => {
+    const [{ user }, barbers] = await Promise.all([api('/api/me'), api('/api/barbers')]);
+    me = user;
+    if (!me) $('#login-hint').style.display = 'block';
+    const want = new URLSearchParams(location.search).get('barber');
+    for (const b of barbers) {
+      const o = new Option(b.name, b.id);
+      if (b.slug === want) o.selected = true;
+      $('#p-barber').appendChild(o);
+    }
+  })();
+</script>
+</body>
+</html>

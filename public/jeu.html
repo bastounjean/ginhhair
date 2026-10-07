@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tond'Clicker · GI N' HAIR</title>
+  <link rel="icon" href="/img/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<main class="section">
+  <div class="wrap">
+    <h1 class="outlined">Tond'Clicker</h1>
+    <p class="lead">Clique sur le crâne pour couper des mèches. Achète du matos, embauche l'équipe, et deviens la légende capillaire de Grenoble. Aucun client n'a été blessé pendant le développement de ce jeu.</p>
+
+    <div class="game" style="margin-top:24px">
+      <div class="card" style="text-align:center">
+        <div class="score" id="score">0</div>
+        <div class="muted">mèches coupées · <b id="rate">0</b>/s · <b id="per">1</b>/clic</div>
+        <div class="rank" id="rank" style="margin:8px 0 4px"></div>
+        <div class="muted" style="font-size:.9rem">Clients servis : <b id="clients">0</b></div>
+
+        <div class="head-zone" id="zone" style="margin-top:12px">
+          <button class="head-btn" id="head" aria-label="Couper les cheveux">
+            <svg viewBox="0 0 300 330">
+              <!-- cape -->
+              <path d="M40 330 Q60 250 150 245 Q240 250 260 330 Z" fill="#1d1416"/>
+              <!-- cou -->
+              <rect x="125" y="215" width="50" height="40" fill="#e9b48f"/>
+              <!-- oreilles -->
+              <ellipse cx="72" cy="160" rx="16" ry="24" fill="#e9b48f" stroke="#1d1416" stroke-width="4"/>
+              <ellipse cx="228" cy="160" rx="16" ry="24" fill="#e9b48f" stroke="#1d1416" stroke-width="4"/>
+              <!-- visage -->
+              <ellipse cx="150" cy="155" rx="78" ry="88" fill="#f2c4a0" stroke="#1d1416" stroke-width="5"/>
+              <!-- cheveux (rétrécissent à chaque clic) -->
+              <g id="hair" style="transform-origin:150px 110px;transition:transform .12s">
+                <path id="hair-path" d="M70 125 Q60 40 150 30 Q245 35 232 125 Q215 85 190 95 Q170 70 150 92 Q128 68 110 95 Q85 85 70 125 Z"
+                      fill="#3b2a1e" stroke="#1d1416" stroke-width="5" stroke-linejoin="round"/>
+              </g>
+              <!-- yeux -->
+              <g id="eyes">
+                <circle cx="122" cy="155" r="9" fill="#1d1416"/><circle cx="178" cy="155" r="9" fill="#1d1416"/>
+                <circle cx="125" cy="152" r="3" fill="#fff"/><circle cx="181" cy="152" r="3" fill="#fff"/>
+              </g>
+              <path d="M110 135 Q122 128 134 135 M166 135 Q178 128 190 135" stroke="#1d1416" stroke-width="5" fill="none" stroke-linecap="round"/>
+              <!-- bouche -->
+              <path id="mouth" d="M125 195 Q150 215 175 195" stroke="#1d1416" stroke-width="5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div style="background:#fff;border:2px solid var(--ink);border-radius:999px;height:16px;overflow:hidden;margin-top:6px">
+          <div id="progress" style="height:100%;width:0;background:var(--wine);transition:width .1s"></div>
+        </div>
+        <p class="muted" style="font-size:.85rem;margin-bottom:0" id="quip">Un client attend. Il a l'air inquiet.</p>
+      </div>
+
+      <div class="card shop">
+        <h3>Boutique du barber</h3>
+        <div id="shop"></div>
+        <button class="btn small ghost" id="reset" style="margin-top:10px">Recommencer à zéro</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="/js/common.js"></script>
+<script>
+  const ITEMS = [
+    { id: 'peigne', ico: '🪮', name: 'Peigne du Monoprix', desc: '+1 mèche par clic', cost: 15, click: 1 },
+    { id: 'stagiaire', ico: '🧑‍🎓', name: 'Stagiaire de 1re année', desc: '+0,5 mèche/s (il dort beaucoup)', cost: 50, auto: 0.5 },
+    { id: 'ciseaux', ico: '✂️', name: 'Ciseaux de cuisine', desc: '+4 par clic', cost: 150, click: 4 },
+    { id: 'anton', ico: '🔴', name: 'Embaucher Anton', desc: '+4 mèches/s, maître du dégradé', cost: 500, auto: 4 },
+    { id: 'tondeuse', ico: '🔌', name: 'Tondeuse sans fil', desc: '+15 par clic', cost: 1200, click: 15 },
+    { id: 'gatien', ico: '🔵', name: 'Embaucher Gatien', desc: '+15 mèches/s, contours au laser', cost: 3000, auto: 15 },
+    { id: 'baptiste', ico: '🟢', name: 'Embaucher Baptiste', desc: '+50 mèches/s, Kanban capillaire', cost: 14000, auto: 50 },
+    { id: 'sabot', ico: '🏆', name: 'Sabot en or massif', desc: '+80 par clic', cost: 25000, click: 80 },
+    { id: 'usine', ico: '🏭', name: 'Usine Lean 4.0', desc: '+300 mèches/s, ligne de production de dégradés', cost: 120000, auto: 300 },
+  ];
+  const RANKS = [
+    [0, 'Apprenti tondeur'], [100, 'Coupeur de frange'], [1000, 'Dégradeur confirmé'], [10000, 'Maître du fade'],
+    [100000, 'Légende de Grenoble'], [1000000, 'Divinité du sabot n°0'],
+  ];
+  const QUIPS = [
+    'Le client te fait confiance. Grosse erreur.', '« Juste les pointes » qu’il a dit…', 'Ça repousse, ça repousse.',
+    'Un dégradé, c’est comme un Gantt : il faut que ça descende proprement.', 'Le client a fermé les yeux. Mauvais signe.',
+    'Tu viens d’inventer une nouvelle coupe. Personne ne la veut.', 'Ta mère serait fière. Le client, moins.',
+  ];
+  const HAIR = ['#3b2a1e', '#d9b25a', '#1d1416', '#8a3b1c', '#f0e2b6', '#6a4b32'];
+  const CUTS_PER_CLIENT = 25;
+
+  let S = { score: 0, total: 0, clients: 0, cuts: 0, owned: {} };
+  try { S = { ...S, ...JSON.parse(localStorage.getItem('tondclicker') || '{}') }; } catch {}
+  const save = () => { try { localStorage.setItem('tondclicker', JSON.stringify(S)); } catch {} };
+
+  const owned = (id) => S.owned[id] || 0;
+  const price = (it) => Math.ceil(it.cost * Math.pow(1.15, owned(it.id)));
+  const perClick = () => 1 + ITEMS.reduce((s, it) => s + (it.click || 0) * owned(it.id), 0);
+  const perSec = () => ITEMS.reduce((s, it) => s + (it.auto || 0) * owned(it.id), 0);
+  const fmt = (n) => n >= 1e6 ? (n / 1e6).toFixed(2).replace('.', ',') + ' M' : Math.floor(n).toLocaleString('fr-FR');
+
+  function gain(n) { S.score += n; S.total += n; }
+
+  function render() {
+    $('#score').textContent = fmt(S.score);
+    $('#rate').textContent = fmt(perSec());
+    $('#per').textContent = fmt(perClick());
+    $('#clients').textContent = S.clients;
+    $('#rank').textContent = '🏅 ' + RANKS.filter(([min]) => S.total >= min).pop()[1];
+    $('#progress').style.width = (100 * S.cuts / CUTS_PER_CLIENT) + '%';
+    $('#hair').style.transform = `scaleY(${1 - 0.85 * S.cuts / CUTS_PER_CLIENT})`;
+    $('#hair-path').setAttribute('fill', HAIR[S.clients % HAIR.length]);
+    $$('.item', $('#shop')).forEach((b) => {
+      const it = ITEMS.find((x) => x.id === b.dataset.id);
+      b.disabled = S.score < price(it);
+      $('.cost', b).textContent = fmt(price(it));
+      $('.own', b).textContent = owned(it.id) || '';
+    });
+  }
+
+  $('#shop').innerHTML = ITEMS.map((it) => `
+    <button class="item" data-id="${it.id}">
+      <span class="ico">${it.ico}</span>
+      <span><b>${it.name}</b><small>${it.desc}</small><span class="cost"></span></span>
+      <span class="own"></span>
+    </button>`).join('');
+  $$('.item').forEach((b) => (b.onclick = () => {
+    const it = ITEMS.find((x) => x.id === b.dataset.id);
+    if (S.score < price(it)) return;
+    S.score -= price(it);
+    S.owned[it.id] = owned(it.id) + 1;
+    toast(`${it.ico} ${it.name} acheté !`);
+    save(); render();
+  }));
+
+  function burst(x, y, text) {
+    const zone = $('#zone');
+    const f = document.createElement('div');
+    f.className = 'float';
+    f.textContent = text;
+    f.style.left = x - 20 + 'px'; f.style.top = y - 30 + 'px';
+    zone.appendChild(f);
+    setTimeout(() => f.remove(), 1000);
+    for (let i = 0; i < 5; i++) {
+      const h = document.createElement('div');
+      h.className = 'hair-bit';
+      h.style.background = HAIR[S.clients % HAIR.length];
+      h.style.left = x + (Math.random() * 40 - 20) + 'px'; h.style.top = y + 'px';
+      h.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
+      h.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
+      zone.appendChild(h);
+      setTimeout(() => h.remove(), 1100);
+    }
+  }
+
+  $('#head').addEventListener('click', (e) => {
+    const r = $('#zone').getBoundingClientRect();
+    const x = (e.clientX || r.left + r.width / 2) - r.left, y = (e.clientY || r.top + 120) - r.top;
+    gain(perClick());
+    burst(x, y, '+' + fmt(perClick()));
+    S.cuts++;
+    if (S.cuts >= CUTS_PER_CLIENT) {
+      S.cuts = 0; S.clients++;
+      const tip = Math.ceil(perClick() * 10 + perSec() * 5);
+      gain(tip);
+      toast(`Client n°${S.clients} servi ! Pourboire : +${fmt(tip)} 💸`);
+      $('#quip').textContent = QUIPS[Math.floor(Math.random() * QUIPS.length)];
+    }
+    save(); render();
+  });
+
+  // Production automatique
+  let last = performance.now();
+  setInterval(() => {
+    const now = performance.now();
+    gain(perSec() * (now - last) / 1000);
+    last = now;
+    render();
+  }, 200);
+  setInterval(save, 5000);
+
+  // Client VIP doré qui passe de temps en temps
+  function spawnVip() {
+    const v = document.createElement('button');
+    v.className = 'vip';
+    v.textContent = '💈';
+    v.setAttribute('aria-label', 'Client VIP');
+    v.style.left = 10 + Math.random() * 75 + 'vw';
+    v.style.top = 15 + Math.random() * 65 + 'vh';
+    v.onclick = () => {
+      const bonus = Math.max(50, Math.ceil(perSec() * 30 + perClick() * 20));
+      gain(bonus);
+      toast(`💈 Client VIP ! +${fmt(bonus)} mèches`);
+      v.remove(); save(); render();
+    };
+    document.body.appendChild(v);
+    setTimeout(() => v.remove(), 6000);
+  }
+  (function loopVip() { setTimeout(() => { spawnVip(); loopVip(); }, 25000 + Math.random() * 35000); })();
+
+  $('#reset').onclick = () => {
+    if (!confirm('Tout effacer et repartir de zéro ?')) return;
+    S = { score: 0, total: 0, clients: 0, cuts: 0, owned: {} };
+    save(); render();
+  };
+  render();
+</script>
+</body>
+</html>

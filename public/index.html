@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GI N' HAIR · Barber club étudiant à Grenoble</title>
+  <meta name="description" content="Trois étudiants en Génie Industriel, zéro diplôme de coiffure, des dégradés quand même très propres. Prends RDV en ligne.">
+  <link rel="icon" href="/img/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="stamp">0 diplôme · 100 % dégradé</span>
+        <h1 class="outlined">Le barber le moins sérieux de Grenoble.</h1>
+        <p class="lead">
+          GI N' HAIR, c'est trois étudiants en Génie Industriel qui ont appliqué le <b>Lean Management</b> à vos cheveux.
+          On a supprimé le gaspillage, les temps d'attente et les diplômes. Il ne reste que la tondeuse, la bonne ambiance
+          et un taux de satisfaction calculé à la main sur un tableur.
+        </p>
+        <p class="muted">Résultat garanti* <small>(*garantie non contractuelle, mais les cheveux repoussent toujours)</small></p>
+        <div class="ctas">
+          <a class="btn" href="/rdv">✂️ Prendre rendez-vous</a>
+          <a class="btn light" href="/equipe">Voir nos coupes</a>
+        </div>
+      </div>
+      <img class="hero-logo" src="/img/logo.png" alt="Logo GI N' HAIR : deux mains tenant une tondeuse et un flacon">
+    </div>
+  </section>
+
+  <section class="marquee" aria-label="Quelques coupes">
+    <div class="marquee-track" id="track"></div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <h2>Comment ça marche ?</h2>
+      <div class="facts">
+        <div class="card">
+          <div class="big">1</div>
+          <h3>Tu choisis ton créneau</h3>
+          <p>Chaque barber a sa couleur sur le planning. Pas de créneau qui te va ? Propose le tien, on fait de notre mieux.</p>
+        </div>
+        <div class="card">
+          <div class="big">2</div>
+          <h3>On te répond par mail</h3>
+          <p>Accepté ou refusé, tu reçois un mail. Pas de pigeon voyageur, on a testé, ça marche moins bien.</p>
+        </div>
+        <div class="card">
+          <div class="big">3</div>
+          <h3>Ta tondeuse se remplit</h3>
+          <p>À chaque visite, ta tondeuse de fidélité se charge. 10 visites et la coupe suivante est offerte.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="card" style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between">
+        <div style="max-width:620px">
+          <h2 style="margin-bottom:.2em">Tu t'ennuies en amphi ?</h2>
+          <p>Notre mini-jeu <b>Tond'Clicker</b> te permet de tondre des crânes à l'infini sans abîmer personne. Embauche Anton, Gatien et Baptiste pour automatiser la production.</p>
+        </div>
+        <a class="btn" href="/jeu">🎮 Jouer</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="/js/common.js"></script>
+<script>
+  // Défilé infini : toutes les photos de l'équipe, doublées pour boucler
+  const photos = Object.values(TEAM).flatMap((b) => b.photos.map((p) => [p[0], `${p[1]} · ${b.name}`]));
+  const track = $('#track');
+  [...photos, ...photos].forEach((p, i) =>
+    track.appendChild(polaroid(p, i, () => lightbox(photos, i % photos.length))));
+</script>
+</body>
+</html>

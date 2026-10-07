@@ -1,0 +1,20 @@
+{
+  "name": "ginhair",
+  "version": "1.0.0",
+  "description": "Site du barber club étudiant GI N' HAIR",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@libsql/client": "^0.18.0",
+    "express": "^5.2.1",
+    "nodemailer": "^10.0.16"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "private": true
+}

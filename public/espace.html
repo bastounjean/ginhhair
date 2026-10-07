@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mon espace · GI N' HAIR</title>
+  <link rel="icon" href="/img/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<main class="section">
+  <div class="wrap">
+
+    <!-- Pas connecté -->
+    <div id="auth" style="display:none;max-width:460px;margin:0 auto">
+      <h1 class="outlined" style="text-align:center">Mon espace</h1>
+      <div class="card">
+        <div class="tabs">
+          <button class="btn small" id="t-login">Connexion</button>
+          <button class="btn small ghost" id="t-register">Inscription</button>
+        </div>
+        <form id="f-login">
+          <label for="l-email">Email</label><input type="email" id="l-email" required autocomplete="email">
+          <label for="l-pw">Mot de passe</label><input type="password" id="l-pw" required autocomplete="current-password">
+          <p class="error" id="l-err"></p>
+          <button class="btn" style="width:100%">Se connecter</button>
+        </form>
+        <form id="f-register" style="display:none">
+          <label for="r-name">Prénom</label><input id="r-name" required autocomplete="given-name">
+          <label for="r-email">Email</label><input type="email" id="r-email" required autocomplete="email">
+          <label for="r-phone">Téléphone (facultatif)</label><input type="tel" id="r-phone" autocomplete="tel">
+          <label for="r-pw">Mot de passe (6 caractères min.)</label><input type="password" id="r-pw" required minlength="6" autocomplete="new-password">
+          <p class="error" id="r-err"></p>
+          <button class="btn" style="width:100%">Créer mon compte</button>
+          <p class="muted" style="font-size:.85rem">Ton email sert uniquement à te prévenir de tes RDV. Pas de spam, promis sur la tête de la tondeuse.</p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Connecté -->
+    <div id="dash" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <h1 class="outlined" id="hello" style="margin:0"></h1>
+        <button class="btn small ghost" id="logout">Se déconnecter</button>
+      </div>
+      <div class="split" style="margin-top:26px">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+            <h2 style="margin:0">Mon planning</h2>
+            <a class="btn small" href="/rdv">+ Nouveau RDV</a>
+          </div>
+          <div id="upcoming"></div>
+          <h3 style="margin-top:28px">Historique</h3>
+          <div id="history"></div>
+        </div>
+        <div class="card clipper-wrap">
+          <h3>Ma tondeuse de fidélité</h3>
+          <svg class="clipper" viewBox="0 0 120 260" aria-hidden="true">
+            <defs>
+              <clipPath id="win"><rect x="34" y="78" width="52" height="140" rx="12"/></clipPath>
+              <linearGradient id="charge" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0" stop-color="#2f8f5b"/><stop offset="1" stop-color="#f2c14e"/>
+              </linearGradient>
+            </defs>
+            <!-- lame -->
+            <rect x="22" y="8" width="76" height="26" rx="4" fill="#d9d9d9" stroke="#1d1416" stroke-width="4"/>
+            <g stroke="#1d1416" stroke-width="3">
+              <line x1="30" y1="8" x2="30" y2="0"/><line x1="40" y1="8" x2="40" y2="0"/><line x1="50" y1="8" x2="50" y2="0"/>
+              <line x1="60" y1="8" x2="60" y2="0"/><line x1="70" y1="8" x2="70" y2="0"/><line x1="80" y1="8" x2="80" y2="0"/><line x1="90" y1="8" x2="90" y2="0"/>
+            </g>
+            <!-- corps -->
+            <path d="M14 40 Q14 30 26 30 H94 Q106 30 106 40 L100 238 Q98 254 82 254 H38 Q22 254 20 238 Z" fill="#5b1424" stroke="#1d1416" stroke-width="5"/>
+            <rect x="46" y="44" width="28" height="18" rx="6" fill="#c9a34a" stroke="#1d1416" stroke-width="3"/>
+            <!-- jauge -->
+            <rect x="34" y="78" width="52" height="140" rx="12" fill="#f1e4c8" stroke="#1d1416" stroke-width="4"/>
+            <rect class="fill" id="fill" x="34" y="218" width="52" height="0" fill="url(#charge)" clip-path="url(#win)"/>
+            <rect x="34" y="78" width="52" height="140" rx="12" fill="none" stroke="#1d1416" stroke-width="4"/>
+            <text id="fill-txt" x="60" y="156" text-anchor="middle" font-family="Titan One" font-size="22" fill="#1d1416">0/10</text>
+          </svg>
+          <div class="dots" id="dots"></div>
+          <p id="loyal-msg" class="muted"></p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="/js/common.js"></script>
+<script>
+  const next = new URLSearchParams(location.search).get('next');
+  const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : null;
+
+  function showTab(login) {
+    $('#f-login').style.display = login ? '' : 'none';
+    $('#f-register').style.display = login ? 'none' : '';
+    $('#t-login').classList.toggle('ghost', !login);
+    $('#t-register').classList.toggle('ghost', login);
+  }
+  $('#t-login').onclick = () => showTab(true);
+  $('#t-register').onclick = () => showTab(false);
+
+  $('#f-login').onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const r = await api('/api/login', { body: { email: $('#l-email').value, password: $('#l-pw').value } });
+      if (r.role === 'barber') location.href = '/barber';
+      else if (safeNext) location.href = safeNext;
+      else load();
+    } catch (err) { $('#l-err').textContent = err.message; }
+  };
+  $('#f-register').onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await api('/api/register', { body: {
+        name: $('#r-name').value, email: $('#r-email').value, phone: $('#r-phone').value, password: $('#r-pw').value,
+      } });
+      if (safeNext) location.href = safeNext; else load();
+    } catch (err) { $('#r-err').textContent = err.message; }
+  };
+  $('#logout').onclick = async () => { await api('/api/logout', { body: {} }); location.reload(); };
+
+  function apptRow(a, cancellable) {
+    const d = document.createElement('div');
+    d.className = 'appt';
+    d.innerHTML = `
+      <span class="when">${fmtWhen(a.start)}</span>
+      <span class="who" style="--c:${a.color || '#999'}"><span class="dot"></span>${esc(a.barber || 'Premier barber dispo')}</span>
+      <span class="tag ${a.status}">${STATUS[a.status]}</span>
+      ${a.kind === 'proposal' ? '<span class="tag">proposé par toi</span>' : ''}
+      <span class="actions">${cancellable ? '<button class="btn small ghost">Annuler</button>' : ''}</span>
+      ${a.reply ? `<span class="note">💬 « ${esc(a.reply)} »</span>` : ''}`;
+    if (cancellable) $('button', d).onclick = async () => {
+      if (!confirm('Annuler ce rendez-vous ?')) return;
+      await api(`/api/appointments/${a.id}/cancel`, { body: {} });
+      toast('RDV annulé.');
+      load();
+    };
+    return d;
+  }
+
+  async function load() {
+    const { user, loyalty } = await api('/api/me');
+    if (!user) { $('#auth').style.display = ''; $('#dash').style.display = 'none'; return; }
+    if (user.role === 'barber') return (location.href = '/barber');
+    $('#auth').style.display = 'none';
+    $('#dash').style.display = '';
+    $('#hello').textContent = `Salut ${user.name} !`;
+
+    const appts = await api('/api/my/appointments');
+    const n = new Date();
+    const now = `${isoDay(n)}T${pad(n.getHours())}:${pad(n.getMinutes())}`;
+    const upcoming = appts.filter((a) => ['pending', 'accepted'].includes(a.status) && a.start >= now).reverse();
+    const history = appts.filter((a) => !upcoming.includes(a));
+    $('#upcoming').innerHTML = upcoming.length ? '' : '<p class="muted">Aucun RDV à venir. Tes cheveux poussent pendant que tu lis ceci.</p>';
+    upcoming.forEach((a) => $('#upcoming').appendChild(apptRow(a, true)));
+    $('#history').innerHTML = history.length ? '' : '<p class="muted">Rien pour l’instant.</p>';
+    history.forEach((a) => $('#history').appendChild(apptRow(a, false)));
+
+    // Tondeuse de fidélité
+    const { current, goal, rewards } = loyalty;
+    const h = (140 * current) / goal;
+    setTimeout(() => { $('#fill').setAttribute('height', h); $('#fill').setAttribute('y', 218 - h); }, 150);
+    $('#fill-txt').textContent = `${current}/${goal}`;
+    $('#dots').innerHTML = Array.from({ length: goal }, (_, i) => `<span class="${i < current ? 'on' : ''}">${i + 1}</span>`).join('');
+    const left = goal - current;
+    $('#loyal-msg').innerHTML = (rewards ? `🎉 <b>${rewards} coupe${rewards > 1 ? 's' : ''} offerte${rewards > 1 ? 's' : ''} gagnée${rewards > 1 ? 's' : ''} !</b><br>` : '') +
+      (left === 1 ? 'Plus qu’une visite avant ta coupe offerte !' : `Encore ${left} visites pour remplir la tondeuse et gagner une coupe offerte.`);
+  }
+  load();
+</script>
+</body>
+</html>

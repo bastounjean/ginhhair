@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Espace barbers · GI N' HAIR</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/img/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<main class="section">
+  <div class="wrap">
+
+    <div id="auth" style="display:none;max-width:420px;margin:0 auto">
+      <h1 class="outlined" style="text-align:center">Espace barbers</h1>
+      <form class="card" id="f-login">
+        <p class="muted" style="margin-top:0">Réservé à Anton, Gatien et Baptiste. Les autres, retournez jouer au <a href="/jeu">Tond'Clicker</a>.</p>
+        <label for="l-email">Email</label><input type="email" id="l-email" required>
+        <label for="l-pw">Mot de passe</label><input type="password" id="l-pw" required>
+        <p class="error" id="l-err"></p>
+        <button class="btn" style="width:100%">Entrer dans le salon</button>
+      </form>
+    </div>
+
+    <div id="dash" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <h1 class="outlined" id="hello" style="margin:0"></h1>
+        <button class="btn small ghost" id="logout">Se déconnecter</button>
+      </div>
+
+      <div class="split" style="margin-top:24px">
+        <div class="card">
+          <h2>Demandes à traiter</h2>
+          <div id="pending"></div>
+          <h2 style="margin-top:30px">RDV confirmés</h2>
+          <div id="accepted"></div>
+        </div>
+        <form class="card" id="f-slots">
+          <h3>Ajouter des dispos</h3>
+          <p class="muted" style="margin-top:0">Le site découpe la plage en créneaux, qui apparaissent dans ta couleur sur le planning public.</p>
+          <label for="s-date">Jour</label><input type="date" id="s-date" required>
+          <div class="row">
+            <div><label for="s-from">De</label><input type="time" id="s-from" value="14:00" step="900" required></div>
+            <div><label for="s-to">À</label><input type="time" id="s-to" value="18:00" step="900" required></div>
+          </div>
+          <label for="s-dur">Durée d'un créneau</label>
+          <select id="s-dur"><option value="30">30 min</option><option value="45">45 min</option><option value="60">1 h</option></select>
+          <p class="error" id="s-err"></p>
+          <button class="btn" style="width:100%">Publier les créneaux</button>
+        </form>
+      </div>
+
+      <div class="card" style="margin-top:30px">
+        <h2>Mon planning</h2>
+        <p class="muted" style="margin-top:0">Clique sur un créneau libre pour le supprimer.</p>
+        <div id="planning"></div>
+      </div>
+
+      <details class="card" style="margin-top:30px">
+        <summary><b>Derniers emails envoyés</b> <span class="muted">(utile pour vérifier ce que reçoivent les clients)</span></summary>
+        <div id="outbox"></div>
+      </details>
+    </div>
+
+  </div>
+</main>
+
+<script src="/js/common.js"></script>
+<script src="/js/planning.js"></script>
+<script>
+  let me = null, planning = null;
+
+  $('#f-login').onsubmit = async (e) => {
+    e.preventDefault();
+    try { await api('/api/login', { body: { email: $('#l-email').value, password: $('#l-pw').value } }); load(); }
+    catch (err) { $('#l-err').textContent = err.message; }
+  };
+  $('#logout').onclick = async () => { await api('/api/logout', { body: {} }); location.reload(); };
+
+  $('#s-date').min = $('#s-date').value = isoDay(new Date());
+  $('#f-slots').onsubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const r = await api('/api/barber/slots', { body: {
+        date: $('#s-date').value, from: $('#s-from').value, to: $('#s-to').value, duration: $('#s-dur').value,
+      } });
+      $('#s-err').textContent = '';
+      toast(`${r.created} créneau${r.created > 1 ? 'x' : ''} publié${r.created > 1 ? 's' : ''} !`);
+      planning.reload();
+    } catch (err) { $('#s-err').textContent = err.message; }
+  };
+
+  async function act(a, action) {
+    let reply = '';
+    if (action === 'accept' || action === 'refuse') {
+      reply = prompt(action === 'accept' ? 'Un petit mot pour le client ? (facultatif)' : 'Raison du refus / autre créneau à proposer ? (facultatif)', '');
+      if (reply === null) return;
+    }
+    try {
+      await api(`/api/barber/appointments/${a.id}/${action}`, { body: { reply } });
+      toast({ accept: 'Accepté, le client reçoit un mail ✅', refuse: 'Refusé, le client est prévenu par mail', done: 'Visite comptée, sa tondeuse se remplit ✂️', noshow: 'Noté comme absent' }[action]);
+      refresh();
+    } catch (err) { toast(err.message); }
+  }
+
+  function row(a, buttons) {
+    const d = document.createElement('div');
+    d.className = 'appt';
+    d.innerHTML = `
+      <span class="when">${fmtWhen(a.start)}</span>
+      <span><b>${esc(a.client)}</b><br><small class="muted">${esc(a.client_email)}${a.client_phone ? ' · ' + esc(a.client_phone) : ''}</small></span>
+      ${a.kind === 'proposal' ? `<span class="tag pending">${a.barber_id ? 'proposé par le client' : 'proposé · n’importe quel barber'}</span>` : ''}
+      <span class="actions"></span>
+      ${a.message ? `<span class="note">💬 « ${esc(a.message)} »</span>` : ''}`;
+    for (const [label, action, cls] of buttons) {
+      const b = document.createElement('button');
+      b.className = `btn small ${cls}`;
+      b.textContent = label;
+      b.onclick = () => act(a, action);
+      $('.actions', d).appendChild(b);
+    }
+    return d;
+  }
+
+  async function refresh() {
+    const appts = await api('/api/barber/appointments');
+    const pending = appts.filter((a) => a.status === 'pending');
+    const accepted = appts.filter((a) => a.status === 'accepted');
+    $('#pending').innerHTML = pending.length ? '' : '<p class="muted">Rien à traiter. Profites-en pour aiguiser tes ciseaux.</p>';
+    pending.forEach((a) => $('#pending').appendChild(row(a, [['Accepter', 'accept', 'green'], ['Refuser', 'refuse', 'red']])));
+    $('#accepted').innerHTML = accepted.length ? '' : '<p class="muted">Aucun RDV confirmé.</p>';
+    accepted.forEach((a) => $('#accepted').appendChild(row(a, [['Venu ✓ (+1 fidélité)', 'done', 'green'], ['Absent', 'noshow', 'ghost']])));
+    const out = await api('/api/barber/outbox');
+    $('#outbox').innerHTML = out.map((m) => `
+      <div class="appt"><span class="when">${esc(m.created_at)}</span><span><b>${esc(m.subject)}</b><br>
+      <small class="muted">À ${esc(m.recipient)} · ${m.sent ? 'envoyé' : 'non envoyé (SMTP pas configuré)'}</small></span>
+      <span class="note" style="white-space:pre-line">${esc(m.body)}</span></div>`).join('') || '<p class="muted">Aucun email.</p>';
+    if (planning) planning.reload();
+  }
+
+  async function load() {
+    const { user } = await api('/api/me');
+    if (!user || user.role !== 'barber') { $('#auth').style.display = ''; return; }
+    me = user;
+    $('#auth').style.display = 'none';
+    $('#dash').style.display = '';
+    $('#hello').textContent = `Salut ${me.name} !`;
+    planning = Planning({
+      el: $('#planning'), filterBarber: me.barber_id, showTaken: true,
+      async onSlot(s) {
+        if (s.status !== 'open') return toast('Ce créneau a une demande en cours, traite-la plus haut.');
+        if (!confirm(`Supprimer le créneau du ${fmtWhen(s.start)} ?`)) return;
+        await api(`/api/barber/slots/${s.id}`, { method: 'DELETE' });
+        planning.reload();
+      },
+    });
+    refresh();
+  }
+  load();
+</script>
+</body>
+</html>

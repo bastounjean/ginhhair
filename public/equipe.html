@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>L'équipe · GI N' HAIR</title>
+  <link rel="icon" href="/img/favicon.png">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<main>
+  <section class="section" style="padding-bottom:10px">
+    <div class="wrap">
+      <span class="stamp">Trombinoscope officiel</span>
+      <h1 class="outlined">Les trois mousquetondeurs</h1>
+      <p class="lead" style="max-width:40em">Trois étudiants en Génie Industriel, trois tondeuses, zéro diplôme reconnu par l'État. Choisis ton barber, chacun a sa couleur sur le planning.</p>
+    </div>
+  </section>
+  <div class="wrap" id="team"></div>
+</main>
+
+<script src="/js/common.js"></script>
+<script>
+  const root = $('#team');
+  for (const [slug, b] of Object.entries(TEAM)) {
+    const el = document.createElement('section');
+    el.className = 'barber';
+    el.id = slug;
+    el.innerHTML = `
+      <div class="id-card card">
+        <div class="avatar" style="background:${b.color}">${b.name[0]}</div>
+        <h2 style="margin:0">${b.name}</h2>
+        <p class="marker" style="color:${b.color};margin:.2em 0 0">${esc(b.title)}</p>
+        <div class="diploma"><b>${esc(b.diploma[0])}</b>${esc(b.diploma[1])}</div>
+        <p>${esc(b.bio)}</p>
+        <ul class="stats">${b.stats.map(([k, v]) => `<li><span class="muted">${esc(k)}</span><b>${esc(v)}</b></li>`).join('')}</ul>
+        <p style="margin-top:18px"><a class="btn small" style="background:${b.color}" href="/rdv?barber=${slug}">RDV avec ${b.name}</a></p>
+      </div>
+      <div class="board"></div>`;
+    const board = $('.board', el);
+    if (b.photos.length) {
+      b.photos.forEach((p, i) => board.appendChild(polaroid(p, i, () => lightbox(b.photos, i))));
+    } else {
+      board.innerHTML = `<div class="empty">Photos bientôt disponibles.<br>${b.name} est encore en train de tondre.</div>`;
+    }
+    root.appendChild(el);
+  }
+</script>
+</body>
+</html>

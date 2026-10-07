@@ -1,0 +1,33 @@
+# Déploiement gratuit sur Render (Blueprint). Les valeurs "sync: false" sont demandées à la création.
+services:
+  - type: web
+    name: ginhair
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: TZ
+        value: Europe/Paris
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_TOKEN
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: MAIL_FROM_EMAIL
+        sync: false
+      - key: BARBER_ANTON_EMAIL
+        sync: false
+      - key: BARBER_ANTON_PASSWORD
+        sync: false
+      - key: BARBER_GATIEN_EMAIL
+        sync: false
+      - key: BARBER_GATIEN_PASSWORD
+        sync: false
+      - key: BARBER_BAPTISTE_EMAIL
+        sync: false
+      - key: BARBER_BAPTISTE_PASSWORD
+        sync: false

@@ -28,7 +28,7 @@
     el.id = slug;
     el.innerHTML = `
       <div class="id-card card">
-        <div class="avatar" style="background:${b.color}">${b.name[0]}</div>
+        <div class="avatar" style="background:${b.color}">${b.avatar ? `<img src="/img/${b.avatar}" alt="${b.name}">` : b.name[0]}</div>
         <h2 style="margin:0">${b.name}</h2>
         <p class="marker" style="color:${b.color};margin:.2em 0 0">${esc(b.title)}</p>
         <a class="insta sticker" href="${instaUrl(b.insta)}" target="_blank" rel="noopener">📸 @${esc(b.insta)}<small>slide dans ses DM (pour un RDV, hein)</small></a>

@@ -45,10 +45,6 @@
         </div>
         <a class="btn light big-insta" id="club-insta" target="_blank" rel="noopener">📸 @ginhair38</a>
       </div>
-      <div class="stalk card">
-        <p class="marker" style="margin:0 0 12px;font-size:1.15rem">Pour stalker ton barber avant de lui confier ta tête :</p>
-        <div class="handles" id="handles"></div>
-      </div>
     </div>
   </section>
 
@@ -93,11 +89,6 @@
   // Défilé infini : toutes les photos de l'équipe, doublées pour boucler
   const photos = Object.values(TEAM).flatMap((b) => b.photos.map((p) => [p[0], `${p[1]} · ${b.name}`]));
   $('#club-insta').href = $('#hero-insta').href = instaUrl(CLUB_INSTA);
-  $('#handles').innerHTML = Object.values(TEAM).map((b, i) =>
-    `<div class="handle" style="--c:${b.color};--r:${[-3, 2, -1][i]}deg">
-       <b>${b.name}</b>
-       <a href="${instaUrl(b.insta)}" target="_blank" rel="noopener">📸 @${esc(b.insta)}</a>
-       <a href="${snapUrl(b.snap)}" target="_blank" rel="noopener">👻 ${esc(b.snap)}</a></div>`).join('');
   const track = $('#track');
   [...photos, ...photos].forEach((p, i) =>
     track.appendChild(polaroid(p, i, () => lightbox(photos, i % photos.length))));

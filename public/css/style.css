@@ -413,3 +413,6 @@ textarea { min-height: 80px; resize: vertical; }
 .podium li span { display: inline-block; min-width: 2em; font-family: 'Titan One'; color: var(--wine); }
 .podium li:nth-child(-n+3) { background: #fff4cc; }
 .podium li.me { outline: 3px solid var(--pole-blue); }
+
+.avatar { overflow: hidden; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }

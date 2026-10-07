@@ -40,6 +40,7 @@ const TEAM = {
     title: 'Le dégradeur en série',
     insta: 'baptistee__jean',
     snap: 'bastoun.jean',
+    avatar: 'avatar-baptiste.jpg',
     diploma: ['Master en optimisation des flux capillaires', 'Spécialité cheveu rebelle (non reconnu par l’État)'],
     bio: "Baptiste a calculé que 87 % des étudiants de Grenoble avaient une coupe à revoir. Il a donc décidé d'agir. Sa seule mesure de satisfaction : le nombre de selfies que tu prends en sortant de sa chaise.",
     stats: [['Spécialité', 'Le taper fade texturé'], ['Arme favorite', 'La tondeuse et le peigne'], ['Taux de retour client', '100 % (les cheveux repoussent)'], ['Diplômes réels', '0, mais beaucoup d’ambition']],

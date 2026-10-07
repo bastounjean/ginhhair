@@ -1,5 +1,7 @@
 # GI N' HAIR · site du barber club
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/bastounjean/ginhhair)
+
 Site en français pour le barber club étudiant (Anton, Gatien, Baptiste).
 
 ## Pages
@@ -40,10 +42,10 @@ Au premier lancement, les trois comptes barbers sont créés. Par défaut :
 | Turso | base de données (comptes, créneaux, RDV) | gratuit (largement suffisant) |
 | Brevo | envoi des mails | 300 mails/jour gratuits |
 
-1. **GitHub** : créer un compte, puis un dépôt privé `ginhair`. Bouton « Add file » → « Upload files » → glisser tout le contenu du dossier (sauf `node_modules` et `data`).
+1. **GitHub** : le code est sur https://github.com/bastounjean/ginhhair.
 2. **Turso** (turso.tech) : créer un compte, une base `ginhair`, puis récupérer son **URL** (`libsql://ginhair-xxx.turso.io`) et créer un **token**.
 3. **Brevo** (brevo.com) : créer un compte, valider l'adresse d'expéditeur (ex. le Gmail du barber club) dans « Expéditeurs », puis créer une **clé API** (SMTP & API → Clés API).
-4. **Render** (render.com) : se connecter avec GitHub → « New » → « Blueprint » → choisir le dépôt. Le fichier `render.yaml` est lu automatiquement ; remplir les valeurs demandées :
+4. **Render** : cliquer sur le bouton « Deploy to Render » en haut de cette page (ou « New » → « Blueprint » → choisir le dépôt). Le fichier `render.yaml` est lu automatiquement ; remplir les valeurs demandées :
    - `DATABASE_URL`, `DATABASE_TOKEN` (Turso)
    - `BREVO_API_KEY`, `MAIL_FROM_EMAIL` (l'adresse validée chez Brevo)
    - `BARBER_ANTON_EMAIL` / `BARBER_ANTON_PASSWORD`, idem `GATIEN` et `BAPTISTE`

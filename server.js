@@ -75,19 +75,32 @@ const BARBERS = [
   { slug: 'gatien', name: 'Gatien', color: '#2456a6' },
   { slug: 'baptiste', name: 'Baptiste', color: '#2f8f5b' },
 ];
+// Les comptes barbers suivent les variables BARBER_<NOM>_EMAIL / _PASSWORD à chaque démarrage :
+// pour changer l'email ou le mot de passe d'un barber, il suffit de modifier la variable sur Render.
 async function setup() {
   await client.executeMultiple(SCHEMA);
   for (const b of BARBERS) {
-  await db.prepare('INSERT OR IGNORE INTO barbers (slug, name, color) VALUES (?, ?, ?)').run(b.slug, b.name, b.color);
-  const barber = await db.prepare('SELECT * FROM barbers WHERE slug = ?').get(b.slug);
-  const email = process.env[`BARBER_${b.slug.toUpperCase()}_EMAIL`] || `${b.slug}@ginhair.local`;
-  const pw = process.env[`BARBER_${b.slug.toUpperCase()}_PASSWORD`] || `${b.slug}-tondeuse`;
-  const existing = await db.prepare('SELECT id FROM users WHERE barber_id = ?').get(barber.id);
-  if (!existing) {
-    await db.prepare("INSERT INTO users (email, name, password_hash, role, barber_id) VALUES (?, ?, ?, 'barber', ?)")
-      .run(email, b.name, hashPassword(pw), barber.id);
-    console.log(`Compte barber créé : ${email} / ${pw}`);
-  }
+    await db.prepare('INSERT OR IGNORE INTO barbers (slug, name, color) VALUES (?, ?, ?)').run(b.slug, b.name, b.color);
+    const barber = await db.prepare('SELECT * FROM barbers WHERE slug = ?').get(b.slug);
+    const envEmail = process.env[`BARBER_${b.slug.toUpperCase()}_EMAIL`];
+    const envPw = process.env[`BARBER_${b.slug.toUpperCase()}_PASSWORD`];
+    const existing = await db.prepare('SELECT id, email FROM users WHERE barber_id = ?').get(barber.id);
+    if (!existing) {
+      const email = envEmail || `${b.slug}@ginhair.local`;
+      await db.prepare("INSERT INTO users (email, name, password_hash, role, barber_id) VALUES (?, ?, ?, 'barber', ?)")
+        .run(email, b.name, hashPassword(envPw || `${b.slug}-tondeuse`), barber.id);
+      console.log(`Compte barber créé pour ${b.name} : ${email}`);
+      continue;
+    }
+    if (envEmail && envEmail.toLowerCase() !== String(existing.email).toLowerCase()) {
+      const taken = await db.prepare('SELECT id FROM users WHERE email = ? AND id != ?').get(envEmail, existing.id);
+      if (taken) console.error(`Impossible de passer ${b.name} à ${envEmail} : cet email a déjà un compte client.`);
+      else {
+        await db.prepare('UPDATE users SET email = ? WHERE id = ?').run(envEmail, existing.id);
+        console.log(`Email de ${b.name} mis à jour : ${envEmail}`);
+      }
+    }
+    if (envPw) await db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(hashPassword(envPw), existing.id);
   }
 }
 

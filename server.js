@@ -434,7 +434,7 @@ app.post('/api/game/score', async (req, res) => {
   res.json({ ok: true });
 });
 app.get('/api/game/ranking', async (req, res) => {
-  const top = await db.prepare('SELECT id, pseudo, total FROM game_players WHERE total > 0 ORDER BY total DESC, updated_at ASC LIMIT 10').all();
+  const top = await db.prepare('SELECT id, pseudo, total FROM game_players WHERE total > 0 ORDER BY total DESC, updated_at ASC LIMIT 3').all();
   const out = { top: top.map((p, i) => ({ rank: i + 1, pseudo: p.pseudo, id: p.id, total: Number(p.total) })), players: (await db.prepare('SELECT COUNT(*) AS n FROM game_players WHERE total > 0').get()).n };
   const me = Number(req.query.id);
   if (me) {

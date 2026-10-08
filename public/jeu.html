@@ -61,8 +61,9 @@
       </div>
 
       <div class="card ranking" style="grid-column:1 / -1">
-        <h3>🏆 Classement en direct</h3>
-        <p class="muted" style="margin-top:0">Mis à jour toutes les 10 secondes. Que le meilleur tondeur gagne.</p>
+        <h3 style="text-align:center;margin-bottom:0">🏆 Le podium</h3>
+        <p class="muted" style="margin-top:4px;text-align:center">En direct, mis à jour toutes les 10 secondes.</p>
+        <div class="podium3" id="podium"></div>
         <form id="join" style="display:none">
           <label for="pseudo">Ton pseudo pour entrer dans le classement</label>
           <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -71,8 +72,7 @@
           </div>
           <p class="error" id="join-err"></p>
         </form>
-        <p id="me-rank" class="rank" style="display:none"></p>
-        <ol class="podium" id="podium"></ol>
+        <p id="me-rank" class="me-rank" style="display:none"></p>
       </div>
     </div>
   </div>
@@ -225,12 +225,20 @@
     try {
       if (player) await api('/api/game/score', { body: { id: player.id, secret: player.secret, total: Math.floor(S.total) } });
       const r = await api('/api/game/ranking' + (player ? `?id=${player.id}` : ''));
-      $('#podium').innerHTML = r.top.length
-        ? r.top.map((p) => `<li class="${player && p.id === player.id ? 'me' : ''}"><span>${MEDALS[p.rank - 1] || p.rank + '.'}</span> ${esc(p.pseudo)}<b class="score">${fmt(p.total || 0)}</b></li>`).join('')
-        : '<li class="muted">Personne pour l’instant. La première place t’attend.</li>';
+      // ordre d'affichage : 2e, 1er, 3e
+      $('#podium').innerHTML = [1, 0, 2].map((i) => {
+        const p = r.top[i];
+        const me = p && player && p.id === player.id;
+        return `<div class="step s${i + 1}${me ? ' me' : ''}">
+          <div class="who">${p ? `<b>${esc(p.pseudo)}</b><span>${fmt(p.total || 0)}</span>` : '<b class="free">Place libre</b>'}</div>
+          <div class="block"><span>${MEDALS[i]}</span></div>
+        </div>`;
+      }).join('');
       if (player && r.myRank) {
         $('#me-rank').style.display = '';
-        $('#me-rank').textContent = `${player.pseudo}, tu es n°${r.myRank} sur ${r.players} tondeur${r.players > 1 ? 's' : ''}`;
+        $('#me-rank').textContent = r.myRank <= 3
+          ? `${player.pseudo}, tu es sur le podium ! (${r.players} joueur${r.players > 1 ? 's' : ''})`
+          : `${player.pseudo}, tu es n°${r.myRank} sur ${r.players} joueurs. Encore un effort pour le podium.`;
       }
     } catch (e) { /* pas grave, on réessaie au prochain tour */ }
   }

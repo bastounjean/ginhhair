@@ -48,42 +48,40 @@
       <span class="fifa-name">${b.name}</span>
       <ul class="fifa-stats">${stats(b)}</ul>
       <span class="fifa-cta">Voir la fiche</span>`;
-    c.onclick = () => { open(slug, true); playTheme(slug); };
+    c.onclick = () => open(slug, true);
     $('#cards').appendChild(c);
   }
 
-  // Musique d'entrée : fichier public/music/<nom>.mp3 déclaré dans TEAM (champ music)
-  const audio = new Audio();
+  // Musique de la page : se lance dès l'arrivée. Si le navigateur bloque le son tant qu'on n'a pas
+  // touché la page (iPhone notamment), elle démarre au premier clic ou appui.
+  const audio = new Audio(`/music/${TEAM_MUSIC}`);
   audio.volume = 0.6;
+  audio.loop = true;
   let muted = false;
-  try { muted = localStorage.getItem('ginhair-mute') === '1'; } catch {}
-  function playTheme(slug) {
-    const src = `/music/${TEAM[slug].music || TEAM_MUSIC}`;
-    if (muted) return;
-    if (audio.src.endsWith(src) && !audio.paused) return; // même musique : on ne la relance pas
-    audio.pause();
-    audio.src = src;
-    audio.currentTime = 0;
-    audio.play().catch(() => {});
-  }
-  function muteButton() {
-    const m = document.createElement('button');
-    m.className = 'btn small ghost mute-btn';
-    m.type = 'button';
-    const mic = '<path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v3M8 21h8"/>';
-    const label = () => {
-      m.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">${mic}${muted ? '' : '<path d="M3 3l18 18"/>'}</svg>`;
-      m.title = m.ariaLabel = muted ? 'Remettre la musique' : 'Couper la musique';
-    };
-    label();
-    m.onclick = () => {
-      muted = !muted;
-      try { localStorage.setItem('ginhair-mute', muted ? '1' : '0'); } catch {}
-      if (muted) audio.pause(); else if (audio.src) audio.play().catch(() => {});
-      label();
-    };
-    return m;
-  }
+  const speaker = '<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/>';
+  const mute = document.createElement('button');
+  mute.className = 'mute-btn';
+  mute.type = 'button';
+  const label = () => {
+    const on = !muted && !audio.paused;
+    mute.innerHTML = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${speaker}${on ? '<path d="M16 9l5 6M21 9l-5 6"/>' : '<path d="M16 9.5a4 4 0 0 1 0 5M18.5 7a7.5 7.5 0 0 1 0 10"/>'}</svg>`;
+    mute.title = mute.ariaLabel = on ? 'Couper la musique' : 'Lancer la musique';
+  };
+  audio.onplay = audio.onpause = label;
+  mute.onclick = (e) => {
+    e.stopPropagation();
+    muted = !audio.paused;
+    if (muted) audio.pause(); else audio.play().catch(() => {});
+  };
+  document.body.appendChild(mute);
+  label();
+  const start = (e) => {
+    if (e.target.closest?.('.mute-btn')) return;
+    if (!muted && audio.paused) audio.play().catch(() => {});
+    if (!audio.paused) ['pointerdown', 'keydown', 'touchstart'].forEach((t) => removeEventListener(t, start));
+  };
+  ['pointerdown', 'keydown', 'touchstart'].forEach((t) => addEventListener(t, start));
+  audio.play().catch(() => {});
 
   function open(slug, scroll) {
     const b = TEAM[slug];
@@ -141,9 +139,7 @@
         <p style="margin:0">${slug === 'gatien' ? 'Les photos existent. Gatien nie tout en bloc.' : "Les preuves sont encore sous scellés. L'enquête suit son cours."}</p>
       </div>`);
     }
-    $('.close-fiche', el).after(muteButton());
     $('.close-fiche', el).onclick = () => {
-      audio.pause();
       root.innerHTML = '';
       document.querySelectorAll('.fifa').forEach((c) => c.classList.remove('active'));
       history.replaceState(null, '', location.pathname);

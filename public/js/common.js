@@ -15,7 +15,7 @@ const instaUrl = (h) => `https://www.instagram.com/${h}/`;
 const COUPE_DU_MOIS = ['coupe8.jpg', 'coupe9.jpg', 'coupe10.jpg'];
 const snapUrl = (h) => `https://www.snapchat.com/add/${h}`;
 
-// Musique lancée quand on ouvre une fiche de l'équipe (public/music). Un barber peut avoir la sienne avec music: '...'.
+// Musique de la page L'équipe (fichier dans public/music), lancée dès l'arrivée et jouée en boucle.
 const TEAM_MUSIC = 'equipe.mp3';
 
 // Les photos des coupes. Pour en ajouter : déposer le fichier dans public/img et l'ajouter ici.

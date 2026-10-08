@@ -42,7 +42,7 @@ const TEAM = {
     diploma: ['CAP Tonte de pelouse synthétique', 'Option : taille de haies en forme de dauphin'],
     bio: "Gatien entretient une relation presque mystique avec la ligne droite. Ses contours sont si nets que les règles de la résidence viennent lui demander conseil. Il parle peu pendant la coupe : il se concentre (ou il dort debout, on n'a jamais tranché).",
     stats: [['Spécialité', 'Les contours au millimètre'], ['Arme favorite', 'Le rasoir de précision'], ['Temps moyen', '32 min (avec débrief)'], ['Niveau de stress', 'Zéro, c’est lui qui tient la tondeuse']],
-    photos: [['gatien1.jpg', 'Taper bouclé']],
+    photos: [['gatien1.jpg', 'Taper bouclé'], ['gatien2.jpg', 'Bouclé au soleil'], ['gatien3.jpg', 'Coupe au bol revisitée'], ['gatien4.jpg', 'Mèches blondes']],
   },
   baptiste: {
     name: 'Baptiste', color: '#2f8f5b',
@@ -127,7 +127,7 @@ function renderChrome() {
   header.className = 'site-header';
   header.innerHTML = `
     <div class="bar">
-      <a class="brand" href="/"><img src="/img/logo.png" alt=""><span>GI N' HAIR</span></a>
+      <a class="brand" href="/"><span>GI N' HAIR</span></a>
       <button class="burger" aria-label="Menu">☰</button>
       <nav class="nav">${NAV.map(([href, label, cls]) =>
         `<a href="${href}" class="${cls || ''} ${here === href ? 'active' : ''}">${label}</a>`).join('')}</nav>

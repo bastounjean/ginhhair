@@ -58,10 +58,11 @@
   let muted = false;
   try { muted = localStorage.getItem('ginhair-mute') === '1'; } catch {}
   function playTheme(slug) {
-    const b = TEAM[slug];
+    const src = `/music/${TEAM[slug].music || TEAM_MUSIC}`;
+    if (muted) return;
+    if (audio.src.endsWith(src) && !audio.paused) return; // même musique : on ne la relance pas
     audio.pause();
-    if (!b.music || muted) return;
-    audio.src = `/music/${b.music}`;
+    audio.src = src;
     audio.currentTime = 0;
     audio.play().catch(() => {});
   }
@@ -136,7 +137,7 @@
         <p style="margin:0">${slug === 'gatien' ? 'Les photos existent. Gatien nie tout en bloc.' : "Les preuves sont encore sous scellés. L'enquête suit son cours."}</p>
       </div>`);
     }
-    if (b.music) $('.close-fiche', el).after(muteButton());
+    $('.close-fiche', el).after(muteButton());
     $('.close-fiche', el).onclick = () => {
       audio.pause();
       root.innerHTML = '';

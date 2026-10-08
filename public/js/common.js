@@ -15,6 +15,9 @@ const instaUrl = (h) => `https://www.instagram.com/${h}/`;
 const COUPE_DU_MOIS = ['coupe8.jpg', 'coupe9.jpg', 'coupe10.jpg'];
 const snapUrl = (h) => `https://www.snapchat.com/add/${h}`;
 
+// Musique lancée quand on ouvre une fiche de l'équipe (public/music). Un barber peut avoir la sienne avec music: '...'.
+const TEAM_MUSIC = 'equipe.mp3';
+
 // Les photos des coupes. Pour en ajouter : déposer le fichier dans public/img et l'ajouter ici.
 const TEAM = {
   anton: {
@@ -50,7 +53,6 @@ const TEAM = {
     instaNote: 'N’hésitez pas, en vrai',
     snapNote: 'Pareil, hésitez pas',
     avatar: 'avatar-baptiste.jpg',
-    music: 'baptiste.mp3',
     // « Un petit peu d'histoire » en bas de la fiche : la toute première coupe (photo censurée au départ)
     debuts: {
       photo: 'carnage1.jpg', caption: 'Coupe n°1 de Baptiste · RIP',

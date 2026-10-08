@@ -46,6 +46,8 @@
           </div>
           <label for="s-dur">Durée d'un créneau</label>
           <select id="s-dur"><option value="30">30 min</option><option value="45">45 min</option><option value="60">1 h</option></select>
+          <label for="s-loc">Où tu coupes ?</label>
+          <input id="s-loc" maxlength="60" placeholder="Ex : Résidence Ouest, chambre 212" required>
           <p class="error" id="s-err"></p>
           <button class="btn" style="width:100%">Publier les créneaux</button>
         </form>
@@ -85,12 +87,15 @@
   $('#logout').onclick = async () => { await api('/api/logout', { body: {} }); location.reload(); };
 
   $('#s-date').min = $('#s-date').value = isoDay(new Date());
+  try { $('#s-loc').value = localStorage.getItem('slotLoc') || ''; } catch {}
   $('#f-slots').onsubmit = async (e) => {
     e.preventDefault();
     try {
       const r = await api('/api/barber/slots', { body: {
         date: $('#s-date').value, from: $('#s-from').value, to: $('#s-to').value, duration: $('#s-dur').value,
+        location: $('#s-loc').value,
       } });
+      try { localStorage.setItem('slotLoc', $('#s-loc').value.trim()); } catch {}
       $('#s-err').textContent = '';
       toast(`${r.created} créneau${r.created > 1 ? 'x' : ''} publié${r.created > 1 ? 's' : ''} !`);
       planning.reload();

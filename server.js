@@ -43,7 +43,7 @@ const SCHEMA = `
   );
   CREATE TABLE IF NOT EXISTS slots (
     id INTEGER PRIMARY KEY, barber_id INTEGER REFERENCES barbers(id),
-    start TEXT, duration INTEGER DEFAULT 30, status TEXT DEFAULT 'open'
+    start TEXT, duration INTEGER DEFAULT 30, status TEXT DEFAULT 'open', location TEXT
   );
   CREATE TABLE IF NOT EXISTS appointments (
     id INTEGER PRIMARY KEY, client_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -90,6 +90,8 @@ const BARBERS = [
 // pour changer l'email ou le mot de passe d'un barber, il suffit de modifier la variable sur Render.
 async function setup() {
   await client.executeMultiple(SCHEMA);
+  // Bases créées avant l'ajout du lieu des créneaux
+  try { await client.execute('ALTER TABLE slots ADD COLUMN location TEXT'); } catch {}
   for (const b of BARBERS) {
     await db.prepare('INSERT OR IGNORE INTO barbers (slug, name, color) VALUES (?, ?, ?)').run(b.slug, b.name, b.color);
     const barber = await db.prepare('SELECT * FROM barbers WHERE slug = ?').get(b.slug);
@@ -250,7 +252,7 @@ app.get('/api/barbers', async (req, res) => res.json(await db.prepare('SELECT * 
 app.get('/api/slots', async (req, res) => {
   const { from, to } = req.query;
   const rows = await db.prepare(
-    `SELECT s.id, s.barber_id, s.start, s.duration, s.status, b.name AS barber, b.color
+    `SELECT s.id, s.barber_id, s.start, s.duration, s.status, s.location, b.name AS barber, b.color
      FROM slots s JOIN barbers b ON b.id = s.barber_id
      WHERE s.start >= ? AND s.start < ? AND s.start >= ? ORDER BY s.start`
   ).all(from || '0000', to || '9999', nowLocal());
@@ -311,6 +313,8 @@ app.post('/api/barber/slots', needBarber, async (req, res) => {
   // Crée une série de créneaux : date, heure de début, heure de fin, durée de chaque créneau
   const { date, from, to, duration } = req.body || {};
   const dur = Number(duration) || 30;
+  const location = String((req.body || {}).location || '').trim().slice(0, 60);
+  if (!location) return res.status(400).json({ error: 'Indique où tu coupes.' });
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date || '') || !/^\d{2}:\d{2}$/.test(from || '') || !/^\d{2}:\d{2}$/.test(to || ''))
     return res.status(400).json({ error: 'Date ou heures invalides.' });
   const toMin = (t) => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
@@ -320,7 +324,7 @@ app.post('/api/barber/slots', needBarber, async (req, res) => {
     const start = `${date}T${p(Math.floor(m / 60))}:${p(m % 60)}`;
     const clash = await db.prepare("SELECT id FROM slots WHERE barber_id = ? AND start = ? AND status != 'deleted'").get(req.user.barber_id, start);
     if (!clash) {
-      await db.prepare('INSERT INTO slots (barber_id, start, duration) VALUES (?, ?, ?)').run(req.user.barber_id, start, dur);
+      await db.prepare('INSERT INTO slots (barber_id, start, duration, location) VALUES (?, ?, ?, ?)').run(req.user.barber_id, start, dur, location);
       created++;
     }
   }
@@ -352,8 +356,10 @@ app.post('/api/barber/appointments/:id/:action', needBarber, async (req, res) =>
   if (action === 'accept' && a.status === 'pending') {
     await db.prepare("UPDATE appointments SET status = 'accepted', barber_id = ?, reply = ? WHERE id = ?").run(me.id, reply, a.id);
     if (a.slot_id) await db.prepare("UPDATE slots SET status = 'booked' WHERE id = ?").run(a.slot_id);
+    const slot = a.slot_id ? await db.prepare('SELECT location FROM slots WHERE id = ?').get(a.slot_id) : null;
     sendMail(a.email, `✅ RDV confirmé le ${fmtDate(a.start)}`,
       `Salut ${a.client} !\n\n${me.name} a accepté ton rendez-vous du ${fmtDate(a.start)}.\n` +
+      (slot && slot.location ? `Lieu : ${slot.location}\n` : '') +
       (reply ? `\nSon message : « ${reply} »\n` : '') +
       `\nViens avec des cheveux (c'est mieux pour nous).\n\nTon espace : ${SITE_URL}/espace\n\nGI N' HAIR`);
   } else if (action === 'refuse' && a.status === 'pending') {

@@ -73,7 +73,7 @@
       if (!me) return (location.href = '/espace?next=/rdv');
       current = slot;
       $('#m-title').textContent = `RDV avec ${slot.barber}`;
-      $('#m-text').innerHTML = `<b>${fmtWhen(slot.start)}</b> · ${slot.duration} min`;
+      $('#m-text').innerHTML = `<b>${fmtWhen(slot.start)}</b> · ${slot.duration} min${slot.location ? `<br>📍 ${esc(slot.location)}` : ''}`;
       $('#m-err').textContent = '';
       $('#m-msg').value = '';
       modal.classList.add('open');

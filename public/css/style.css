@@ -270,6 +270,7 @@ textarea { min-height: 80px; resize: vertical; }
 }
 .slot:hover { transform: scale(1.04); }
 .slot b { display: block; font-size: .95rem; }
+.slot .loc { display: block; font-size: .68rem; opacity: .85; line-height: 1.15; margin-top: 2px; overflow-wrap: break-word; hyphens: auto; }
 .slot.held { opacity: .5; cursor: not-allowed; background: repeating-linear-gradient(45deg, #eee 0 6px, #fff 6px 12px); }
 .slot.booked { opacity: .35; cursor: not-allowed; }
 .day .none { color: var(--muted); font-size: .8rem; text-align: center; padding: 14px 4px; }

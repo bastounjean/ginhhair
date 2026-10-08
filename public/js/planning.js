@@ -71,8 +71,8 @@ function Planning(options) {
         btn.className = 'slot ' + (s.status !== 'open' ? s.status : '');
         btn.style.setProperty('--c', s.color);
         const label = s.status === 'held' ? ' ⏳' : s.status === 'booked' ? ' ✓' : '';
-        btn.title = `${s.barber} · ${s.duration} min${s.status === 'held' ? ' · déjà demandé' : ''}`;
-        btn.innerHTML = `<b>${s.start.slice(11, 16).replace(':', 'h')}</b>${esc(s.barber)}${label}`;
+        btn.title = `${s.barber}${s.location ? ' · ' + s.location : ''} · ${s.duration} min${s.status === 'held' ? ' · déjà demandé' : ''}`;
+        btn.innerHTML = `<b>${s.start.slice(11, 16).replace(':', 'h')}</b>${esc(s.barber)}${label}${s.location ? `<small class="loc">📍&nbsp;${esc(s.location)}</small>` : ''}`;
         btn.onclick = () => options.onSlot && options.onSlot(s);
         box.appendChild(btn);
       }

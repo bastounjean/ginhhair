@@ -165,6 +165,8 @@ function fmtDate(start) {
 // ---------- App ----------
 const app = express();
 app.use(express.json());
+// L'ancienne page « Les débuts » est maintenant dans les fiches de l'équipe
+app.get('/debuts', (req, res) => res.redirect(301, '/equipe#baptiste'));
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
 
 function parseCookies(req) {

@@ -22,6 +22,17 @@
   </div>
 </main>
 
+<div class="modal" id="warn">
+  <div class="card warn-card">
+    <div style="font-size:3rem;line-height:1">⚠️</div>
+    <h2>Êtes-vous sûr de vouloir voir ce que vous allez voir ?</h2>
+    <p>Cette image peut heurter la sensibilité des coiffeurs, des nuques fragiles et des personnes qui ont déjà mangé.</p>
+    <div class="ctas" style="justify-content:center">
+      <button class="btn" id="warn-yes">Oui, j'assume</button>
+      <button class="btn light" id="warn-no">Non, j'ai peur</button>
+    </div>
+  </div>
+</div>
 <script src="/js/common.js"></script>
 <script>
   const root = $('#team');
@@ -70,15 +81,45 @@
     } else {
       board.innerHTML = `<div class="empty">Photos bientôt disponibles.<br>${b.name} est encore en train de tondre.</div>`;
     }
+    const hist = document.createElement('section');
+    hist.className = 'histoire';
+    hist.innerHTML = `<div class="tape-line"><span>UN PETIT PEU D'HISTOIRE · LA PREMIÈRE COUPE</span></div>`;
+    if (b.debuts) {
+      hist.insertAdjacentHTML('beforeend', `
+        <div class="crime">
+          <figure class="polaroid censored" style="--r:-3deg">
+            <img src="/img/${b.debuts.photo}" alt="La toute première coupe de ${b.name}">
+            <button class="censor" type="button"><b>CENSURÉ</b><span>Clique pour décensurer</span></button>
+            <figcaption>${esc(b.debuts.caption)}</figcaption>
+          </figure>
+          <div class="card">
+            <h2>Rapport d'incident</h2>
+            <dl class="report">${b.debuts.report.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+          </div>
+        </div>`);
+      const fig = $('.polaroid', hist);
+      $('.censor', hist).onclick = () => {
+        $('#warn').classList.add('open');
+        $('#warn-yes').focus();
+        $('#warn-yes').onclick = () => { $('#warn').classList.remove('open'); fig.classList.remove('censored'); };
+      };
+    } else {
+      hist.insertAdjacentHTML('beforeend', `<div class="card debuts-soon">
+        <h2 style="margin:0 0 .3em">Dossier en cours d'instruction</h2>
+        <p style="margin:0">${slug === 'gatien' ? 'Les photos existent. Gatien nie tout en bloc.' : "Les preuves sont encore sous scellés. L'enquête suit son cours."}</p>
+      </div>`);
+    }
     $('.close-fiche', el).onclick = () => {
       root.innerHTML = '';
       document.querySelectorAll('.fifa').forEach((c) => c.classList.remove('active'));
       history.replaceState(null, '', location.pathname);
       $('#cards').scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
-    root.appendChild(el);
+    root.append(el, hist);
     if (scroll) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+  $('#warn-no').onclick = () => { $('#warn').classList.remove('open'); toast('Sage décision.'); };
+  $('#warn').onclick = (e) => { if (e.target.id === 'warn') e.target.classList.remove('open'); };
   if (location.hash) open(location.hash.slice(1), true);
 </script>
 </body>

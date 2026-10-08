@@ -4,7 +4,6 @@ const NAV = [
   ['/', 'Accueil'],
   ['/equipe', "L'équipe"],
   ['/rdv', 'Rendez-vous'],
-  ['/debuts', 'Les débuts'],
   ['/jeu', 'Mini-jeu'],
   ['/espace', 'Mon espace', 'cta'],
 ];
@@ -21,7 +20,7 @@ const TEAM = {
   anton: {
     name: 'Anton', color: '#c8202f',
     title: 'Le maître du dégradé (autoproclamé)',
-    fifa: { note: 87, stats: [['DÉG', 92], ['CTR', 85], ['VIT', 78], ['PAT', 84], ['TCH', 90], ['DIP', 0]] },
+    fifa: { note: 98, stats: [['DÉG', 92], ['CTR', 85], ['VIT', 78], ['PAT', 84], ['TCH', 90], ['DIP', 0]] },
     insta: 'anton_flz',
     instaNote: 'DM saturés, passe par webmail',
     diploma: ['Diplôme de désherbage animalier', 'Mention « le mouton n’a presque rien senti »'],
@@ -32,7 +31,7 @@ const TEAM = {
   gatien: {
     name: 'Gatien', color: '#2456a6',
     title: 'Le chirurgien de la nuque',
-    fifa: { note: 88, stats: [['DÉG', 84], ['CTR', 97], ['VIT', 70], ['PAT', 95], ['TCH', 41], ['DIP', 0]] },
+    fifa: { note: 85, stats: [['DÉG', 84], ['CTR', 97], ['VIT', 70], ['PAT', 95], ['TCH', 41], ['DIP', 0]] },
     insta: 'gatien.clv',
     instaNote: 'Ajoute-le sur Pokémon Go plutôt',
     diploma: ['CAP Tonte de pelouse synthétique', 'Option : taille de haies en forme de dauphin'],
@@ -43,12 +42,23 @@ const TEAM = {
   baptiste: {
     name: 'Baptiste', color: '#2f8f5b',
     title: 'Le dégradeur en série',
-    fifa: { note: 89, stats: [['DÉG', 94], ['CTR', 86], ['VIT', 88], ['PAT', 80], ['TCH', 92], ['DIP', 0]] },
+    fifa: { note: 85, stats: [['DÉG', 94], ['CTR', 86], ['VIT', 88], ['PAT', 80], ['TCH', 92], ['DIP', 0]] },
     insta: 'baptistee__jean',
     snap: 'bastoun.jean',
     instaNote: 'N’hésitez pas, en vrai',
     snapNote: 'Pareil, hésitez pas',
     avatar: 'avatar-baptiste.jpg',
+    // « Un petit peu d'histoire » en bas de la fiche : la toute première coupe (photo censurée au départ)
+    debuts: {
+      photo: 'carnage1.jpg', caption: 'Coupe n°1 de Baptiste · RIP',
+      report: [
+        ['Victime', 'Ce brave De Castel.'],
+        ['Matériel utilisé', 'Sûrement une tondeuse à boules.'],
+        ['Constat', "Un dégradé qui n'arrivait pas à choisir entre trois hauteurs, et une nuque d'un rouge qui n'était pas prévu au programme."],
+        ['Bilan', 'Une nuque presque anéantie.'],
+        ['Leçon apprise', "Y'a un début à tout."],
+      ],
+    },
     diploma: ['Master en optimisation des flux capillaires', 'Spécialité cheveu rebelle (non reconnu par l’État)'],
     bio: "Baptiste a calculé que 87 % des étudiants de Grenoble avaient une coupe à revoir. Il a donc décidé d'agir. Sa seule mesure de satisfaction : le nombre de selfies que tu prends en sortant de sa chaise.",
     stats: [['Spécialité', 'Le taper fade texturé'], ['Arme favorite', 'La tondeuse et le peigne'], ['Taux de retour client', '100 % (les cheveux repoussent)'], ['Diplômes réels', '0, mais beaucoup d’ambition']],

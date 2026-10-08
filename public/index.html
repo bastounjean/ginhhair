@@ -22,7 +22,7 @@
         </p>
         <p class="muted">Résultat garanti* <small>(*garantie non contractuelle, mais les cheveux repoussent toujours)</small></p>
         <div class="ctas">
-          <a class="btn" href="/rdv">✂️ Prendre rendez-vous</a>
+          <a class="btn" href="/rdv">Prendre rendez-vous</a>
           <a class="btn light" href="/equipe">Voir nos coupes</a>
         </div>
       </div>
@@ -74,7 +74,7 @@
     <div class="wrap">
       <div class="card" style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between">
         <div style="max-width:620px">
-          <h2 style="margin-bottom:.2em">Tu t'ennuies en amphi ?</h2>
+          <h2 style="margin-bottom:.2em">Mieux que Fortnite sah</h2>
           <p>Notre mini-jeu <b>Tond'Clicker</b> te permet de tondre des crânes à l'infini sans abîmer personne. Embauche Anton, Gatien et Baptiste pour automatiser la production.</p>
         </div>
         <a class="btn" href="/jeu">🎮 Jouer</a>
@@ -107,7 +107,7 @@
       if (REELS.length > 1 && i === last) i = (i + 1) % REELS.length;
       last = i;
       const code = (REELS[i].match(/instagram\.com\/(?:reel|p)\/([\w-]+)/) || [])[1];
-      if (code) $('#reel').src = `https://www.instagram.com/reel/${code}/embed`;
+      if (code) $('#reel').src = `https://www.instagram.com/p/${code}/embed`;
     };
     $('#reel-section').hidden = false;
     $('#reel-next').hidden = REELS.length < 2;

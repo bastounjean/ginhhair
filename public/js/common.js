@@ -14,6 +14,7 @@ const instaUrl = (h) => `https://www.instagram.com/${h}/`;
 // Réels Instagram montrés au hasard sur l'accueil : coller ici les liens (« Copier le lien » dans Instagram).
 // Tant que la liste est vide, la fenêtre n'apparaît pas.
 const REELS = [
+  'https://www.instagram.com/p/DdY9U3Psza4/',
 ];
 const snapUrl = (h) => `https://www.snapchat.com/add/${h}`;
 
@@ -23,7 +24,6 @@ const TEAM = {
     name: 'Anton', color: '#c8202f',
     title: 'Le maître du dégradé (autoproclamé)',
     insta: 'anton_flz',
-    snap: 'anton_flz',
     instaNote: 'DM saturés, passe par webmail',
     diploma: ['Diplôme de désherbage animalier', 'Mention « le mouton n’a presque rien senti »'],
     bio: "Anton a découvert sa vocation en tondant le chien de sa grand-mère en 2014. Le chien s'en est remis. Depuis, il traite chaque crâne avec tout le respect qu'il n'a pas eu pour ce pauvre caniche.",
@@ -34,7 +34,6 @@ const TEAM = {
     name: 'Gatien', color: '#2456a6',
     title: 'Le chirurgien de la nuque',
     insta: 'gatien.clv',
-    snap: 'gatien.calvier',
     instaNote: 'Ajoute-le sur Pokémon Go plutôt',
     diploma: ['CAP Tonte de pelouse synthétique', 'Option : taille de haies en forme de dauphin'],
     bio: "Gatien entretient une relation presque mystique avec la ligne droite. Ses contours sont si nets que les règles de la résidence viennent lui demander conseil. Il parle peu pendant la coupe : il se concentre (ou il dort debout, on n'a jamais tranché).",

@@ -48,8 +48,36 @@
       <span class="fifa-name">${b.name}</span>
       <ul class="fifa-stats">${stats(b)}</ul>
       <span class="fifa-cta">Voir la fiche</span>`;
-    c.onclick = () => open(slug, true);
+    c.onclick = () => { open(slug, true); playTheme(slug); };
     $('#cards').appendChild(c);
+  }
+
+  // Musique d'entrée : fichier public/music/<nom>.mp3 déclaré dans TEAM (champ music)
+  const audio = new Audio();
+  audio.volume = 0.6;
+  let muted = false;
+  try { muted = localStorage.getItem('ginhair-mute') === '1'; } catch {}
+  function playTheme(slug) {
+    const b = TEAM[slug];
+    audio.pause();
+    if (!b.music || muted) return;
+    audio.src = `/music/${b.music}`;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+  }
+  function muteButton() {
+    const m = document.createElement('button');
+    m.className = 'btn small ghost';
+    m.type = 'button';
+    const label = () => { m.textContent = muted ? '🔇 Remettre le son' : '🔊 Couper le son'; };
+    label();
+    m.onclick = () => {
+      muted = !muted;
+      try { localStorage.setItem('ginhair-mute', muted ? '1' : '0'); } catch {}
+      if (muted) audio.pause(); else if (audio.src) audio.play().catch(() => {});
+      label();
+    };
+    return m;
   }
 
   function open(slug, scroll) {
@@ -69,7 +97,6 @@
         <p class="marker" style="color:${b.color};margin:.2em 0 0">${esc(b.title)}</p>
         <a class="insta sticker" href="${instaUrl(b.insta)}" target="_blank" rel="noopener">📸 @${esc(b.insta)}${b.instaNote ? `<small>${esc(b.instaNote)}</small>` : ''}</a>
         ${b.snap ? `<a class="snap sticker" href="${snapUrl(b.snap)}" target="_blank" rel="noopener">👻 ${esc(b.snap)}${b.snapNote ? `<small>${esc(b.snapNote)}</small>` : ''}</a>` : ''}
-        <div class="diploma"><b>${esc(b.diploma[0])}</b>${esc(b.diploma[1])}</div>
         <p>${esc(b.bio)}</p>
         <ul class="stats">${b.stats.map(([k, v]) => `<li><span class="muted">${esc(k)}</span><b>${esc(v)}</b></li>`).join('')}</ul>
         <p style="margin-top:18px"><a class="btn small" style="background:${b.color}" href="/rdv?barber=${slug}">RDV avec ${b.name}</a></p>
@@ -109,7 +136,9 @@
         <p style="margin:0">${slug === 'gatien' ? 'Les photos existent. Gatien nie tout en bloc.' : "Les preuves sont encore sous scellés. L'enquête suit son cours."}</p>
       </div>`);
     }
+    if (b.music) $('.close-fiche', el).after(muteButton());
     $('.close-fiche', el).onclick = () => {
+      audio.pause();
       root.innerHTML = '';
       document.querySelectorAll('.fifa').forEach((c) => c.classList.remove('active'));
       history.replaceState(null, '', location.pathname);

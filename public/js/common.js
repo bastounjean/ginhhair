@@ -29,7 +29,7 @@ const TEAM = {
     avatar: 'avatar-anton.jpg',
     diploma: ['Diplôme de désherbage animalier', 'Mention « le mouton n’a presque rien senti »'],
     bio: "Anton a découvert sa vocation en tondant le chien de sa grand-mère en 2014. Le chien s'en est remis. Depuis, il traite chaque crâne avec tout le respect qu'il n'a pas eu pour ce pauvre caniche.",
-    stats: [['Spécialité', 'Le mid fade'], ['Arme favorite', 'Tondeuse sabot 1,5'], ['Cheveux coupés', '≈ 4,2 millions'], ['Client perdu', 'Aucun (confirmé)']],
+    stats: [['Spécialité', 'Le mid fade'], ['Outil préféré', 'Tondeuse sabot 1,5'], ['Cheveux coupés', '≈ 4,2 millions'], ['Client perdu', 'Aucun (confirmé)']],
     photos: [],
   },
   gatien: {
@@ -41,7 +41,7 @@ const TEAM = {
     avatar: 'avatar-gatien.jpg',
     diploma: ['CAP Tonte de pelouse synthétique', 'Option : taille de haies en forme de dauphin'],
     bio: "Gatien entretient une relation presque mystique avec la ligne droite. Ses contours sont si nets que les règles de la résidence viennent lui demander conseil. Il parle peu pendant la coupe : il se concentre (ou il dort debout, on n'a jamais tranché).",
-    stats: [['Spécialité', 'Les contours au millimètre'], ['Arme favorite', 'Le rasoir de précision'], ['Temps moyen', '32 min (avec débrief)'], ['Niveau de stress', 'Zéro, c’est lui qui tient la tondeuse']],
+    stats: [['Spécialité', 'Les contours au millimètre'], ['Outil préféré', 'Le rasoir de précision'], ['Temps moyen', '32 min (avec débrief)'], ['Niveau de stress', 'Zéro, c’est lui qui tient la tondeuse']],
     debuts: {
       photo: 'carnage-gatien.jpg', caption: 'Coupe n°1 de Gatien · RIP',
       report: [
@@ -75,8 +75,8 @@ const TEAM = {
       ],
     },
     diploma: ['Master en optimisation des flux capillaires', 'Spécialité cheveu rebelle (non reconnu par l’État)'],
-    bio: "Baptiste a calculé que 87 % des étudiants de Grenoble avaient une coupe à revoir. Il a donc décidé d'agir. Sa seule mesure de satisfaction : le nombre de selfies que tu prends en sortant de sa chaise.",
-    stats: [['Spécialité', 'Le taper fade texturé'], ['Arme favorite', 'La tondeuse et le peigne'], ['Taux de retour client', '100 % (les cheveux repoussent)'], ['Diplômes réels', '0, mais beaucoup d’ambition']],
+    bio: "Baptiste a calculé que 87 % des étudiants de Grenoble avaient des cheveux. Il a donc décidé d'agir. Sa seule mesure de satisfaction : le nombre de fois où le client répète « oua tu m'as tué bâtard ».",
+    stats: [['Spécialité', "Dire que, en vrai, c'est pas si mal alors que le gars n'a plus de crâne"], ['Outil préféré', 'Fortnite'], ['Taux de retour client', '100 % (les cheveux repoussent)'], ['Diplôme', "Aucun, mais il y met beaucoup d'amour"]],
     photos: [
       ['coupe10.jpg', 'Mid fade du soir'], ['coupe3.jpg', 'Mèche maîtrisée'], ['coupe5.jpg', 'Texture naturelle'],
       ['coupe6.jpg', 'Mid fade + bière'], ['coupe8.jpg', 'Blond surfeur'], ['coupe9.jpg', 'Taper texturé'],
@@ -91,7 +91,7 @@ const TEAM = {
     avatar: 'avatar-gajelle.jpg',
     fifa: { note: 77, stats: [['DÉG', 68], ['CTR', 71], ['VIT', 99], ['PAT', 62], ['TCH', 96], ['DIP', 0]] },
     bio: "Gajelle attend sur le banc depuis le premier jour, tondeuse chargée et antennes de papillon sur la tête. Le jour où un titulaire se tord le poignet en plein dégradé, c'est Gajelle qui rentre sur le terrain. En attendant, l'échauffement se fait sur des brosses à cheveux.",
-    stats: [['Poste', 'Remplaçant (banc de touche)'], ['Spécialité', 'Rentrer à la 89e minute'], ['Arme favorite', 'Les antennes papillon'], ['Temps de jeu', 'En attente du coach']],
+    stats: [['Poste', 'Remplaçant (banc de touche)'], ['Spécialité', 'Rentrer à la 89e minute'], ['Outil préféré', 'Les antennes papillon'], ['Temps de jeu', 'En attente du coach']],
     soon: "Le banc de touche n'a encore rien révélé. L'enquête suit son cours.",
     photos: [],
   },

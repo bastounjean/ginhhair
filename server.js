@@ -55,6 +55,9 @@ const SCHEMA = `
     id INTEGER PRIMARY KEY, pseudo TEXT UNIQUE COLLATE NOCASE, secret_hash TEXT,
     total REAL DEFAULT 0, updated_at INTEGER
   );
+  CREATE TABLE IF NOT EXISTS poll_votes (
+    poll TEXT, voter TEXT, choice TEXT, PRIMARY KEY (poll, voter)
+  );
   CREATE TABLE IF NOT EXISTS outbox (
     id INTEGER PRIMARY KEY, recipient TEXT, subject TEXT, body TEXT, sent INTEGER DEFAULT 0,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
@@ -400,6 +403,27 @@ app.get('/api/game/ranking', async (req, res) => {
     if (row) out.myRank = (await db.prepare('SELECT COUNT(*) AS n FROM game_players WHERE total > ? OR (total = ? AND updated_at < ?)').get(row.total, row.total, row.updated_at)).n + 1;
   }
   res.json(out);
+});
+
+// « La coupe du mois » : un vote par visiteur (jeton gardé dans son navigateur) et par mois
+const pollId = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; };
+const pollResults = async (poll, voter) => {
+  const rows = await db.prepare('SELECT choice, COUNT(*) AS n FROM poll_votes WHERE poll = ? GROUP BY choice').all(poll);
+  const mine = voter ? (await db.prepare('SELECT choice FROM poll_votes WHERE poll = ? AND voter = ?').get(poll, voter))?.choice : null;
+  return { poll, counts: Object.fromEntries(rows.map((r) => [r.choice, Number(r.n)])), mine: mine || null };
+};
+const validVoter = (v) => typeof v === 'string' && /^[a-f0-9]{16,64}$/.test(v);
+app.get('/api/poll', async (req, res) => {
+  res.json(await pollResults(pollId(), validVoter(req.query.voter) ? req.query.voter : null));
+});
+app.post('/api/poll', async (req, res) => {
+  const { voter, choice } = req.body || {};
+  if (!validVoter(voter) || typeof choice !== 'string' || !/^[\w-]+\.(jpg|jpeg|png|webp)$/i.test(choice)
+    || !fs.existsSync(path.join(__dirname, 'public', 'img', choice)))
+    return res.status(400).json({ error: 'Vote invalide' });
+  const poll = pollId();
+  await db.prepare('INSERT INTO poll_votes (poll, voter, choice) VALUES (?, ?, ?) ON CONFLICT (poll, voter) DO UPDATE SET choice = excluded.choice').run(poll, voter, choice);
+  res.json(await pollResults(poll, voter));
 });
 
 setup().then(() => app.listen(PORT, () => console.log(`GI N' HAIR en ligne sur ${SITE_URL}`)));

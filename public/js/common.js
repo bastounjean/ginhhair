@@ -11,11 +11,9 @@ const NAV = [
 
 const CLUB_INSTA = 'ginhair38';
 const instaUrl = (h) => `https://www.instagram.com/${h}/`;
-// Réels Instagram montrés au hasard sur l'accueil : coller ici les liens (« Copier le lien » dans Instagram).
-// Tant que la liste est vide, la fenêtre n'apparaît pas.
-const REELS = [
-  'https://www.instagram.com/p/DdY9U3Psza4/',
-];
+// « La coupe du mois » sur l'accueil : les 3 coupes en compétition (noms des photos de TEAM ci-dessous).
+// Les votes repartent à zéro chaque mois. Pensez à mettre ici vos 3 dernières coupes ajoutées.
+const COUPE_DU_MOIS = ['coupe8.jpg', 'coupe9.jpg', 'coupe10.jpg'];
 const snapUrl = (h) => `https://www.snapchat.com/add/${h}`;
 
 // Les photos des coupes. Pour en ajouter : déposer le fichier dans public/img et l'ajouter ici.

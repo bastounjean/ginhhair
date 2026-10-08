@@ -81,15 +81,13 @@
       </div>
     </div>
   </section>
-  <section class="section" id="reel-section" style="padding-top:0" hidden>
-    <div class="wrap reel-wrap">
-      <div>
-        <span class="stamp">Tiré au sort rien que pour toi</span>
-        <h2>Le réel du moment</h2>
-        <p>Un réel de <b>@ginhair38</b> choisi au hasard à chaque visite. Recharge la page pour en voir un autre (ou abonne-toi, c'est plus simple).</p>
-        <button class="btn small light" id="reel-next">🎲 Un autre réel</button>
-      </div>
-      <div class="reel-frame"><iframe id="reel" title="Réel Instagram de GI N' HAIR" loading="lazy" allowtransparency="true" allowfullscreen scrolling="no"></iframe></div>
+  <section class="section" id="poll-section" style="padding-top:0">
+    <div class="wrap" style="text-align:center">
+      <span class="stamp">Vote en direct</span>
+      <h2>La coupe du mois</h2>
+      <p class="lead" id="poll-intro" style="max-width:36em;margin:0 auto 26px">Les trois dernières coupes s'affrontent. Clique sur ta préférée, le peuple a toujours raison (sauf sur les mulets).</p>
+      <div class="poll" id="poll"></div>
+      <p class="muted" id="poll-total" style="margin-top:22px"></p>
     </div>
   </section>
 </main>
@@ -99,21 +97,41 @@
   // Défilé infini : toutes les photos de l'équipe, doublées pour boucler
   const photos = Object.values(TEAM).flatMap((b) => b.photos.map((p) => [p[0], `${p[1]} · ${b.name}`]));
   $('#club-insta').href = instaUrl(CLUB_INSTA);
-  // Réel Instagram aléatoire (liste dans REELS, public/js/common.js)
-  if (REELS.length) {
-    let last = -1;
-    const showReel = () => {
-      let i = Math.floor(Math.random() * REELS.length);
-      if (REELS.length > 1 && i === last) i = (i + 1) % REELS.length;
-      last = i;
-      const code = (REELS[i].match(/instagram\.com\/(?:reel|p)\/([\w-]+)/) || [])[1];
-      if (code) $('#reel').src = `https://www.instagram.com/p/${code}/embed`;
-    };
-    $('#reel-section').hidden = false;
-    $('#reel-next').hidden = REELS.length < 2;
-    $('#reel-next').onclick = showReel;
-    showReel();
+  // La coupe du mois : vote anonyme, un jeton par navigateur
+  const pollPhotos = COUPE_DU_MOIS.map((file) => {
+    const b = Object.values(TEAM).find((t) => t.photos.some((p) => p[0] === file));
+    return b && { file, caption: b.photos.find((p) => p[0] === file)[1], barber: b };
+  }).filter(Boolean);
+  let voter = null;
+  try { voter = localStorage.getItem('ginhair-voter'); } catch {}
+  if (!voter) {
+    voter = [...crypto.getRandomValues(new Uint8Array(16))].map((x) => x.toString(16).padStart(2, '0')).join('');
+    try { localStorage.setItem('ginhair-voter', voter); } catch {}
   }
+  const renderPoll = (res) => {
+    const total = pollPhotos.reduce((n, p) => n + (res?.counts[p.file] || 0), 0);
+    const voted = res && res.mine && pollPhotos.some((p) => p.file === res.mine);
+    $('#poll').innerHTML = '';
+    pollPhotos.forEach((p, i) => {
+      const pct = total ? Math.round((res.counts[p.file] || 0) * 100 / total) : 0;
+      const f = polaroid([p.file, `${p.caption} · ${p.barber.name}`], i, () => vote(p.file));
+      f.classList.add('poll-choice');
+      if (voted) {
+        f.classList.toggle('mine', res.mine === p.file);
+        f.insertAdjacentHTML('beforeend', `<div class="poll-bar"><span style="width:${pct}%;background:${p.barber.color}"></span><b>${pct} %</b></div>`);
+      }
+      $('#poll').appendChild(f);
+    });
+    $('#poll-total').textContent = voted
+      ? `${total} vote${total > 1 ? 's' : ''} ce mois-ci. Tu peux changer d'avis en cliquant sur une autre photo.`
+      : 'Les résultats s’affichent après ton vote.';
+  };
+  const vote = async (file) => {
+    try { renderPoll(await api('/api/poll', { body: { voter, choice: file } })); toast('A voté !'); }
+    catch (e) { toast(e.message); }
+  };
+  if (pollPhotos.length) api(`/api/poll?voter=${voter}`).then(renderPoll).catch(() => renderPoll(null));
+  else $('#poll-section').hidden = true;
   const track = $('#track');
   [...photos, ...photos].forEach((p, i) =>
     track.appendChild(polaroid(p, i, () => lightbox(photos, i % photos.length))));

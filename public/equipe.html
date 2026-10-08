@@ -68,9 +68,13 @@
   }
   function muteButton() {
     const m = document.createElement('button');
-    m.className = 'btn small ghost';
+    m.className = 'btn small ghost mute-btn';
     m.type = 'button';
-    const label = () => { m.textContent = muted ? '🔇 Remettre le son' : '🔊 Couper le son'; };
+    const mic = '<path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M19 11a7 7 0 0 1-14 0M12 18v3M8 21h8"/>';
+    const label = () => {
+      m.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">${mic}${muted ? '' : '<path d="M3 3l18 18"/>'}</svg>`;
+      m.title = m.ariaLabel = muted ? 'Remettre la musique' : 'Couper la musique';
+    };
     label();
     m.onclick = () => {
       muted = !muted;

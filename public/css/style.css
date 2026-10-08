@@ -484,3 +484,4 @@ textarea { min-height: 80px; resize: vertical; }
 .fifa-cta { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--c); margin: 4px 0 18px; }
 .close-fiche { float: right; }
 #team .barber { padding-top: 10px; scroll-margin-top: 90px; }
+.mute-btn { float: right; margin-right: 8px; padding: 6px 10px; line-height: 0; }

@@ -45,7 +45,7 @@ const TEAM = {
     title: 'Le dégradeur en série',
     fifa: { note: 85, stats: [['DÉG', 94], ['CTR', 86], ['VIT', 88], ['PAT', 80], ['TCH', 92], ['DIP', 0]] },
     insta: 'baptistee__jean',
-    snap: 'bastoun.jean',
+    snap: 'baptistee.jean',
     instaNote: 'N’hésitez pas, en vrai',
     snapNote: 'Pareil, hésitez pas',
     avatar: 'avatar-baptiste.jpg',

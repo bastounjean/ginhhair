@@ -21,6 +21,7 @@ const TEAM = {
   anton: {
     name: 'Anton', color: '#c8202f',
     title: 'Le maître du dégradé (autoproclamé)',
+    fifa: { note: 87, stats: [['DÉG', 92], ['CTR', 85], ['VIT', 78], ['PAT', 84], ['TCH', 90], ['DIP', 0]] },
     insta: 'anton_flz',
     instaNote: 'DM saturés, passe par webmail',
     diploma: ['Diplôme de désherbage animalier', 'Mention « le mouton n’a presque rien senti »'],
@@ -31,6 +32,7 @@ const TEAM = {
   gatien: {
     name: 'Gatien', color: '#2456a6',
     title: 'Le chirurgien de la nuque',
+    fifa: { note: 88, stats: [['DÉG', 84], ['CTR', 97], ['VIT', 70], ['PAT', 95], ['TCH', 41], ['DIP', 0]] },
     insta: 'gatien.clv',
     instaNote: 'Ajoute-le sur Pokémon Go plutôt',
     diploma: ['CAP Tonte de pelouse synthétique', 'Option : taille de haies en forme de dauphin'],
@@ -41,6 +43,7 @@ const TEAM = {
   baptiste: {
     name: 'Baptiste', color: '#2f8f5b',
     title: 'Le dégradeur en série',
+    fifa: { note: 89, stats: [['DÉG', 94], ['CTR', 86], ['VIT', 88], ['PAT', 80], ['TCH', 92], ['DIP', 0]] },
     insta: 'baptistee__jean',
     snap: 'bastoun.jean',
     instaNote: 'N’hésitez pas, en vrai',

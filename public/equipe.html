@@ -13,21 +13,46 @@
     <div class="wrap">
       <span class="stamp">Trombinoscope officiel</span>
       <h1 class="outlined">Les trois mousquetondeurs</h1>
-      <p class="lead" style="max-width:40em">Trois Géhissss, trois tondeuses, zéro diplôme reconnu par l'État. Choisis ton barber, chacun a sa couleur sur le planning.</p>
+      <p class="lead" style="max-width:40em">Trois Géhissss, trois tondeuses, zéro diplôme reconnu par l'État. Clique sur une carte pour découvrir le joueur.</p>
     </div>
   </section>
-  <div class="wrap" id="team"></div>
+  <div class="wrap">
+    <div class="fifa-row" id="cards"></div>
+    <div id="team"></div>
+  </div>
 </main>
 
 <script src="/js/common.js"></script>
 <script>
   const root = $('#team');
+  const stats = (b) => b.fifa.stats.map(([k, v]) => `<li><b>${v}</b> ${k}</li>`).join('');
   for (const [slug, b] of Object.entries(TEAM)) {
+    const c = document.createElement('button');
+    c.className = 'fifa';
+    c.dataset.slug = slug;
+    c.style.setProperty('--c', b.color);
+    c.innerHTML = `
+      <span class="fifa-top"><b>${b.fifa.note}</b><small>BRB</small><img src="/img/favicon.png" alt=""></span>
+      <span class="fifa-face">${b.avatar ? `<img src="/img/${b.avatar}" alt="">` : b.name[0]}</span>
+      <span class="fifa-name">${b.name}</span>
+      <ul class="fifa-stats">${stats(b)}</ul>
+      <span class="fifa-cta">Voir la fiche</span>`;
+    c.onclick = () => open(slug, true);
+    $('#cards').appendChild(c);
+  }
+
+  function open(slug, scroll) {
+    const b = TEAM[slug];
+    if (!b) return;
+    document.querySelectorAll('.fifa').forEach((c) => c.classList.toggle('active', c.dataset.slug === slug));
+    history.replaceState(null, '', `#${slug}`);
+    root.innerHTML = '';
     const el = document.createElement('section');
     el.className = 'barber';
-    el.id = slug;
+    el.id = `fiche-${slug}`;
     el.innerHTML = `
       <div class="id-card card">
+        <button class="btn small ghost close-fiche" type="button">✕ Fermer</button>
         <div class="avatar" style="background:${b.color}">${b.avatar ? `<img src="/img/${b.avatar}" alt="${b.name}">` : b.name[0]}</div>
         <h2 style="margin:0">${b.name}</h2>
         <p class="marker" style="color:${b.color};margin:.2em 0 0">${esc(b.title)}</p>
@@ -45,8 +70,16 @@
     } else {
       board.innerHTML = `<div class="empty">Photos bientôt disponibles.<br>${b.name} est encore en train de tondre.</div>`;
     }
+    $('.close-fiche', el).onclick = () => {
+      root.innerHTML = '';
+      document.querySelectorAll('.fifa').forEach((c) => c.classList.remove('active'));
+      history.replaceState(null, '', location.pathname);
+      $('#cards').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
     root.appendChild(el);
+    if (scroll) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+  if (location.hash) open(location.hash.slice(1), true);
 </script>
 </body>
 </html>

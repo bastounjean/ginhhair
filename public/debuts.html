@@ -32,8 +32,9 @@
 
   <section class="section" style="padding-top:20px">
     <div class="wrap crime">
-      <figure class="polaroid" style="--r:-3deg">
+      <figure class="polaroid censored" id="carnage" style="--r:-3deg">
         <img src="/img/carnage1.jpg" alt="La toute première coupe de Baptiste : un dégradé très approximatif et une nuque rougie">
+        <button class="censor" type="button"><b>CENSURÉ</b><span>Clique pour décensurer</span></button>
         <figcaption>Coupe n°1 de Baptiste · RIP</figcaption>
       </figure>
       <div class="card">
@@ -54,16 +55,9 @@
     </div>
   </section>
 
-  <section class="section" style="padding-top:0">
+  <section class="section" style="padding:0">
     <div class="wrap" style="text-align:center">
-      <h2>Depuis, il a un peu progressé</h2>
-      <p class="lead" style="max-width:36em;margin:0 auto 30px">Les cheveux repoussent, le talent aussi. La preuve en images.</p>
-      <div class="vs">
-        <figure class="polaroid" style="--r:-4deg"><img src="/img/carnage1.jpg" alt="Première coupe"><figcaption>Au début</figcaption></figure>
-        <span class="arrow">➜</span>
-        <figure class="polaroid" style="--r:3deg"><img src="/img/coupe10.jpg" alt="Une coupe récente"><figcaption>Aujourd'hui</figcaption></figure>
-      </div>
-      <p class="muted" style="font-size:.9rem;margin-top:30px">Merci De Castel. Ta nuque n'est pas morte pour rien.</p>
+      <p class="muted" style="font-size:.9rem;margin:0">Merci De Castel. Ta nuque n'est pas morte pour rien.</p>
     </div>
   </section>
 
@@ -85,6 +79,25 @@
     <p style="text-align:center;margin-top:40px"><a class="btn" href="/rdv">Bon, maintenant on gère : prends RDV</a></p>
   </section>
 </main>
+<div class="modal" id="warn">
+  <div class="card warn-card">
+    <div style="font-size:3rem;line-height:1">⚠️</div>
+    <h2>Êtes-vous sûr de vouloir voir ce que vous allez voir ?</h2>
+    <p>Cette image peut heurter la sensibilité des coiffeurs, des nuques fragiles et des personnes qui ont déjà mangé.</p>
+    <div class="ctas" style="justify-content:center">
+      <button class="btn" id="warn-yes">Oui, j'assume</button>
+      <button class="btn light" id="warn-no">Non, j'ai peur</button>
+    </div>
+  </div>
+</div>
 <script src="/js/common.js"></script>
+<script>
+  const warn = $('#warn');
+  const close = () => warn.classList.remove('open');
+  $('#carnage .censor').onclick = () => { warn.classList.add('open'); $('#warn-yes').focus(); };
+  $('#warn-no').onclick = () => { close(); toast('Sage décision.'); };
+  warn.onclick = (e) => { if (e.target === warn) close(); };
+  $('#warn-yes').onclick = () => { close(); $('#carnage').classList.remove('censored'); };
+</script>
 </body>
 </html>

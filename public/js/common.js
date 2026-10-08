@@ -50,6 +50,7 @@ const TEAM = {
     instaNote: 'N’hésitez pas, en vrai',
     snapNote: 'Pareil, hésitez pas',
     avatar: 'avatar-baptiste.jpg',
+    music: 'baptiste.mp3',
     // « Un petit peu d'histoire » en bas de la fiche : la toute première coupe (photo censurée au départ)
     debuts: {
       photo: 'carnage1.jpg', caption: 'Coupe n°1 de Baptiste · RIP',

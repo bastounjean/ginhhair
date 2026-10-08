@@ -384,7 +384,9 @@ textarea { min-height: 80px; resize: vertical; }
 .report dd { margin: 0; }
 .vs { display: flex; gap: 30px; justify-content: center; align-items: center; flex-wrap: wrap; }
 .vs .arrow { font: 3rem 'Titan One'; color: var(--wine); }
-@media (max-width: 820px) { .crime { grid-template-columns: 1fr; } .vs .arrow { transform: rotate(90deg); } }
+.debuts-soon { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.debuts-soon .card { text-align: center; border-style: dashed; }
+@media (max-width: 820px) { .debuts-soon { grid-template-columns: 1fr; } .crime { grid-template-columns: 1fr; } .vs .arrow { transform: rotate(90deg); } }
 
 /* Bandeau Insta de l'accueil & Snapchat */
 .insta-banner {

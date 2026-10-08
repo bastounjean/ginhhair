@@ -50,10 +50,9 @@ const TEAM = {
     bio: "Baptiste a calculé que 87 % des étudiants de Grenoble avaient une coupe à revoir. Il a donc décidé d'agir. Sa seule mesure de satisfaction : le nombre de selfies que tu prends en sortant de sa chaise.",
     stats: [['Spécialité', 'Le taper fade texturé'], ['Arme favorite', 'La tondeuse et le peigne'], ['Taux de retour client', '100 % (les cheveux repoussent)'], ['Diplômes réels', '0, mais beaucoup d’ambition']],
     photos: [
-      ['coupe1.jpg', 'Taper blond platine'], ['coupe2.jpg', 'Nuque nette'], ['coupe3.jpg', 'Mèche maîtrisée'],
-      ['coupe4.jpg', 'Dégradé bas'], ['coupe5.jpg', 'Texture naturelle'], ['coupe6.jpg', 'Mid fade + bière'],
-      ['coupe7.jpg', 'Burst fade bouclé'], ['coupe8.jpg', 'Blond surfeur'],
-      ['coupe9.jpg', 'Taper texturé'], ['coupe10.jpg', 'Mid fade du soir'],
+      ['coupe10.jpg', 'Mid fade du soir'], ['coupe3.jpg', 'Mèche maîtrisée'], ['coupe5.jpg', 'Texture naturelle'],
+      ['coupe6.jpg', 'Mid fade + bière'], ['coupe8.jpg', 'Blond surfeur'], ['coupe9.jpg', 'Taper texturé'],
+      ['coupe2.jpg', 'Nuque nette'], ['coupe1.jpg', 'Taper blond platine'],
     ],
   },
 };

@@ -73,6 +73,17 @@ const TEAM = {
       ['coupe2.jpg', 'Nuque nette'], ['coupe1.jpg', 'Taper blond platine'],
     ],
   },
+  // Le remplaçant : affiché à part sur L'équipe, pas de prise de RDV
+  gajelle: {
+    name: 'Gajelle', color: '#7a3fa0', sub: true,
+    title: 'Joker de luxe',
+    avatar: 'avatar-gajelle.jpg',
+    fifa: { note: 77, stats: [['DÉG', 68], ['CTR', 71], ['VIT', 99], ['PAT', 62], ['TCH', 96], ['DIP', 0]] },
+    bio: "Gajelle attend sur le banc depuis le premier jour, tondeuse chargée et antennes de papillon sur la tête. Le jour où un titulaire se tord le poignet en plein dégradé, c'est Gajelle qui rentre sur le terrain. En attendant, l'échauffement se fait sur des brosses à cheveux.",
+    stats: [['Poste', 'Remplaçant (banc de touche)'], ['Spécialité', 'Rentrer à la 89e minute'], ['Arme favorite', 'Les antennes papillon'], ['Temps de jeu', 'En attente du coach']],
+    soon: "Le banc de touche n'a encore rien révélé. L'enquête suit son cours.",
+    photos: [],
+  },
 };
 
 const $ = (sel, root = document) => root.querySelector(sel);

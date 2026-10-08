@@ -494,3 +494,8 @@ textarea { min-height: 80px; resize: vertical; }
 .play-card h2 { margin: 0; }
 .btn.play-btn { font: 2.4rem 'Titan One'; padding: 18px 90px; letter-spacing: .03em; }
 @media (max-width: 640px) { .play-card { justify-content: center; text-align: center; } .btn.play-btn { width: 100%; justify-content: center; } }
+.squad-title { text-align: center; margin: 10px 0 0; font-size: clamp(1.6rem, 4vw, 2.2rem); }
+.squad-title::before, .squad-title::after { content: '★'; color: #c99a2e; margin: 0 .4em; font-size: .7em; vertical-align: middle; }
+.fifa.silver { background: linear-gradient(160deg, #ffffff 0%, #d7dde3 38%, #9aa5b1 70%, #e6eaee 100%); color: #26303a; }
+.fifa.silver .fifa-face { border-color: #26303a; }
+.fifa.silver .fifa-name { border-color: rgba(38,48,58,.4); }

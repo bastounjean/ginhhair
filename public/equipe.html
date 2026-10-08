@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>L'équipe · GI N' HAIR</title>
+  <title>GI N' HAIR au complet</title>
   <link rel="icon" href="/img/favicon.png">
   <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -12,12 +12,15 @@
   <section class="section" style="padding-bottom:10px">
     <div class="wrap">
       <span class="stamp">Trombinoscope officiel</span>
-      <h1 class="outlined">Les trois mousquetondeurs</h1>
-      <p class="lead" style="max-width:40em">Trois Géhissss, trois tondeuses, zéro diplôme reconnu par l'État. Clique sur une carte pour découvrir le joueur.</p>
+      <h1 class="outlined">GI N' HAIR au complet</h1>
+      <p class="lead" style="max-width:40em">Clique sur une carte pour découvrir le joueur.</p>
     </div>
   </section>
   <div class="wrap">
+    <h2 class="squad-title">Les titulaires</h2>
     <div class="fifa-row" id="cards"></div>
+    <h2 class="squad-title">Le remplaçant</h2>
+    <div class="fifa-row bench" id="subs"></div>
     <div id="team"></div>
   </div>
 </main>
@@ -40,17 +43,17 @@
   const stats = (b) => b.fifa.stats.map(([k, v]) => `<li><b>${v}</b> ${k}</li>`).join('');
   for (const [slug, b] of Object.entries(TEAM)) {
     const c = document.createElement('button');
-    c.className = 'fifa';
+    c.className = b.sub ? 'fifa silver' : 'fifa';
     c.dataset.slug = slug;
     c.style.setProperty('--c', b.color);
     c.innerHTML = `
-      <span class="fifa-top"><b>${b.fifa.note}</b><small>BRB</small><img src="/img/favicon.png" alt=""></span>
+      <span class="fifa-top"><b>${b.fifa.note}</b><small>${b.sub ? 'REM' : 'BRB'}</small><img src="/img/favicon.png" alt=""></span>
       <span class="fifa-face">${b.avatar ? `<img src="/img/${b.avatar}" alt="">` : b.name[0]}</span>
       <span class="fifa-name">${b.name}</span>
       <ul class="fifa-stats">${stats(b)}</ul>
       <span class="fifa-cta">Voir la fiche</span>`;
     c.onclick = () => open(slug, true);
-    $('#cards').appendChild(c);
+    $(b.sub ? '#subs' : '#cards').appendChild(c);
   }
 
   // Musique de la page : se lance dès l'arrivée. Si le navigateur bloque le son tant qu'on n'a pas
@@ -97,11 +100,11 @@
         <div class="avatar" style="background:${b.color}">${b.avatar ? `<img src="/img/${b.avatar}" alt="${b.name}">` : b.name[0]}</div>
         <h2 style="margin:0">${b.name}</h2>
         <p class="marker" style="color:${b.color};margin:.2em 0 0">${esc(b.title)}</p>
-        <a class="insta sticker" href="${instaUrl(b.insta)}" target="_blank" rel="noopener">📸 @${esc(b.insta)}${b.instaNote ? `<small>${esc(b.instaNote)}</small>` : ''}</a>
+        ${b.insta ? `<a class="insta sticker" href="${instaUrl(b.insta)}" target="_blank" rel="noopener">📸 @${esc(b.insta)}${b.instaNote ? `<small>${esc(b.instaNote)}</small>` : ''}</a>` : ''}
         ${b.snap ? `<a class="snap sticker" href="${snapUrl(b.snap)}" target="_blank" rel="noopener">👻 ${esc(b.snap)}${b.snapNote ? `<small>${esc(b.snapNote)}</small>` : ''}</a>` : ''}
         <p>${esc(b.bio)}</p>
         <ul class="stats">${b.stats.map(([k, v]) => `<li><span class="muted">${esc(k)}</span><b>${esc(v)}</b></li>`).join('')}</ul>
-        <p style="margin-top:18px"><a class="btn small" style="background:${b.color}" href="/rdv?barber=${slug}">RDV avec ${b.name}</a></p>
+        ${b.sub ? '' : `<p style="margin-top:18px"><a class="btn small" style="background:${b.color}" href="/rdv?barber=${slug}">RDV avec ${b.name}</a></p>`}
       </div>
       <div class="board"></div>`;
     const board = $('.board', el);
@@ -136,14 +139,14 @@
     } else {
       hist.insertAdjacentHTML('beforeend', `<div class="card debuts-soon">
         <h2 style="margin:0 0 .3em">Dossier en cours d'instruction</h2>
-        <p style="margin:0">${slug === 'gatien' ? 'Les photos existent. Gatien nie tout en bloc.' : "Les preuves sont encore sous scellés. L'enquête suit son cours."}</p>
+        <p style="margin:0">${b.soon || (slug === 'gatien' ? 'Les photos existent. Gatien nie tout en bloc.' : "Les preuves sont encore sous scellés. L'enquête suit son cours.")}</p>
       </div>`);
     }
     $('.close-fiche', el).onclick = () => {
       root.innerHTML = '';
       document.querySelectorAll('.fifa').forEach((c) => c.classList.remove('active'));
       history.replaceState(null, '', location.pathname);
-      $('#cards').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      $(b.sub ? '#subs' : '#cards').scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
     root.append(el, hist);
     if (scroll) el.scrollIntoView({ behavior: 'smooth', block: 'start' });

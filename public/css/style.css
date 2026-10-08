@@ -490,3 +490,7 @@ textarea { min-height: 80px; resize: vertical; }
   border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); transition: transform .15s;
 }
 .mute-btn:hover { transform: scale(1.08); }
+.play-card { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; }
+.play-card h2 { margin: 0; }
+.btn.play-btn { font: 2.4rem 'Titan One'; padding: 18px 90px; letter-spacing: .03em; }
+@media (max-width: 640px) { .play-card { justify-content: center; text-align: center; } .btn.play-btn { width: 100%; justify-content: center; } }

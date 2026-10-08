@@ -103,7 +103,13 @@
 <script src="/js/common.js"></script>
 <script>
   // Défilé infini : toutes les photos de l'équipe, doublées pour boucler
-  const photos = Object.values(TEAM).flatMap((b) => b.photos.map((p) => [p[0], `Par ${b.name}`]));
+  // Défilé : photos de tous les barbers mélangées, cadre teinté à la couleur de chacun
+  const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  // chaque barber est réparti régulièrement sur tout le défilé, dans un ordre aléatoire
+  const photos = Object.values(TEAM).flatMap((b) => shuffle(b.photos.map((p) => [p[0], `Par ${b.name}`, b.color]))
+    .map((p, k, all) => [(k + 0.25 + Math.random() * 0.5) / all.length, p]))
+    .sort((x, y) => x[0] - y[0]).map((x) => x[1]);
+  const tint = (f, color) => { f.classList.add('tinted'); f.style.setProperty('--c', color); return f; };
   $('#club-insta').href = instaUrl(CLUB_INSTA);
   // La coupe du mois : vote anonyme, un jeton par navigateur
   const pollPhotos = COUPE_DU_MOIS.map((file) => {
@@ -122,7 +128,7 @@
     $('#poll').innerHTML = '';
     pollPhotos.forEach((p, i) => {
       const pct = total ? Math.round((res.counts[p.file] || 0) * 100 / total) : 0;
-      const f = polaroid([p.file, `Par ${p.barber.name}`], i, () => vote(p.file));
+      const f = tint(polaroid([p.file, `Par ${p.barber.name}`], i, () => vote(p.file)), p.barber.color);
       f.classList.add('poll-choice');
       if (voted) {
         f.classList.toggle('mine', res.mine === p.file);
@@ -159,7 +165,7 @@
   }).catch(() => {});
   const track = $('#track');
   [...photos, ...photos].forEach((p, i) =>
-    track.appendChild(polaroid(p, i, () => lightbox(photos, i % photos.length))));
+    track.appendChild(tint(polaroid(p, i, () => lightbox(photos, i % photos.length)), p[2])));
 </script>
 </body>
 </html>

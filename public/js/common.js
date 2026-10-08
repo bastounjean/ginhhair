@@ -42,6 +42,16 @@ const TEAM = {
     diploma: ['CAP Tonte de pelouse synthétique', 'Option : taille de haies en forme de dauphin'],
     bio: "Gatien entretient une relation presque mystique avec la ligne droite. Ses contours sont si nets que les règles de la résidence viennent lui demander conseil. Il parle peu pendant la coupe : il se concentre (ou il dort debout, on n'a jamais tranché).",
     stats: [['Spécialité', 'Les contours au millimètre'], ['Arme favorite', 'Le rasoir de précision'], ['Temps moyen', '32 min (avec débrief)'], ['Niveau de stress', 'Zéro, c’est lui qui tient la tondeuse']],
+    debuts: {
+      photo: 'carnage-gatien.jpg', caption: 'Coupe n°1 de Gatien · RIP',
+      report: [
+        ['Victime', 'Un cobaye volontaire (il ne savait pas).'],
+        ['Matériel utilisé', 'Une tondeuse et beaucoup trop de confiance.'],
+        ['Constat', 'Un dégradé qui monte en escalier et une oreille qui a vu la lame de près.'],
+        ['Bilan', 'Une petite trace rouge derrière l’oreille, souvenir à vie.'],
+        ['Leçon apprise', 'Les oreilles, ça se plie avant de passer la tondeuse.'],
+      ],
+    },
     photos: [['gatien1.jpg', 'Taper bouclé'], ['gatien2.jpg', 'Bouclé au soleil'], ['gatien3.jpg', 'Coupe au bol revisitée'], ['gatien4.jpg', 'Mèches blondes']],
   },
   baptiste: {

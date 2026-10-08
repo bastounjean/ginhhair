@@ -423,7 +423,8 @@ textarea { min-height: 80px; resize: vertical; }
 
 /* Classement du jeu */
 .podium { list-style: none; padding: 0; margin: 10px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
-.podium li { background: #fff; border: 2px solid var(--ink); border-radius: 10px; padding: 8px 12px; font-weight: 500; }
+.podium li { background: #fff; border: 2px solid var(--ink); border-radius: 10px; padding: 8px 12px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+.podium li .score { margin-left: auto; font-family: 'Titan One'; font-weight: 400; color: var(--wine); }
 .podium li span { display: inline-block; min-width: 2em; font-family: 'Titan One'; color: var(--wine); }
 .podium li:nth-child(-n+3) { background: #fff4cc; }
 .podium li.me { outline: 3px solid var(--pole-blue); }
@@ -499,3 +500,6 @@ textarea { min-height: 80px; resize: vertical; }
 .fifa.silver { background: linear-gradient(160deg, #ffffff 0%, #d7dde3 38%, #9aa5b1 70%, #e6eaee 100%); color: #26303a; }
 .fifa.silver .fifa-face { border-color: #26303a; }
 .fifa.silver .fifa-name { border-color: rgba(38,48,58,.4); }
+/* Photos teintées selon le barber (accueil) */
+.polaroid.tinted { background: color-mix(in srgb, var(--c) 24%, #fffaf3); }
+.polaroid.tinted figcaption { color: color-mix(in srgb, var(--c) 75%, #1d1416); }

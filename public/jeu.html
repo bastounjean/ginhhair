@@ -62,7 +62,7 @@
 
       <div class="card ranking" style="grid-column:1 / -1">
         <h3>🏆 Classement en direct</h3>
-        <p class="muted" style="margin-top:0">Pas de scores affichés, juste l'humiliation du rang. Mis à jour toutes les 10 secondes.</p>
+        <p class="muted" style="margin-top:0">Mis à jour toutes les 10 secondes. Que le meilleur tondeur gagne.</p>
         <form id="join" style="display:none">
           <label for="pseudo">Ton pseudo pour entrer dans le classement</label>
           <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -226,7 +226,7 @@
       if (player) await api('/api/game/score', { body: { id: player.id, secret: player.secret, total: Math.floor(S.total) } });
       const r = await api('/api/game/ranking' + (player ? `?id=${player.id}` : ''));
       $('#podium').innerHTML = r.top.length
-        ? r.top.map((p) => `<li class="${player && p.id === player.id ? 'me' : ''}"><span>${MEDALS[p.rank - 1] || p.rank + '.'}</span> ${esc(p.pseudo)}</li>`).join('')
+        ? r.top.map((p) => `<li class="${player && p.id === player.id ? 'me' : ''}"><span>${MEDALS[p.rank - 1] || p.rank + '.'}</span> ${esc(p.pseudo)}<b class="score">${fmt(p.total || 0)}</b></li>`).join('')
         : '<li class="muted">Personne pour l’instant. La première place t’attend.</li>';
       if (player && r.myRank) {
         $('#me-rank').style.display = '';

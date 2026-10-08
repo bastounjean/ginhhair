@@ -62,10 +62,10 @@
     <div class="wrap">
       <div class="card" style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between">
         <div style="max-width:620px">
-          <h2 style="margin-bottom:.2em">Mieux que Fortnite sah</h2>
+          <h2 style="margin-bottom:.2em">Clicker de neuille</h2>
           <p>Notre mini-jeu <b>Tond'Clicker</b> te permet de tondre des crânes à l'infini sans abîmer personne. Embauche Anton, Gatien et Baptiste pour automatiser la production.</p>
         </div>
-        <a class="btn" href="/jeu">🎮 Jouer</a>
+        <a class="btn" href="/jeu">Jouer</a>
       </div>
     </div>
   </section>
@@ -163,7 +163,7 @@
   };
   api('/api/reviews/featured').then((r) => {
     if (!r) return;
-    $('#fav-text').textContent = `« ${r.message} »`;
+    $('#fav-text').textContent = r.message;
     $('#fav-name').textContent = r.name ? `${r.name}` : 'Un client anonyme';
     $('#fav-review').hidden = false;
   }).catch(() => {});

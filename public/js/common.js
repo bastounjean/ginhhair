@@ -23,6 +23,7 @@ const TEAM = {
     fifa: { note: 98, stats: [['DÉG', 92], ['CTR', 85], ['VIT', 78], ['PAT', 84], ['TCH', 90], ['DIP', 0]] },
     insta: 'anton_flz',
     instaNote: 'DM saturés, passe par webmail',
+    avatar: 'avatar-anton.jpg',
     diploma: ['Diplôme de désherbage animalier', 'Mention « le mouton n’a presque rien senti »'],
     bio: "Anton a découvert sa vocation en tondant le chien de sa grand-mère en 2014. Le chien s'en est remis. Depuis, il traite chaque crâne avec tout le respect qu'il n'a pas eu pour ce pauvre caniche.",
     stats: [['Spécialité', 'Le mid fade'], ['Arme favorite', 'Tondeuse sabot 1,5'], ['Cheveux coupés', '≈ 4,2 millions'], ['Client perdu', 'Aucun (confirmé)']],

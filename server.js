@@ -58,6 +58,10 @@ const SCHEMA = `
   CREATE TABLE IF NOT EXISTS poll_votes (
     poll TEXT, voter TEXT, choice TEXT, PRIMARY KEY (poll, voter)
   );
+  CREATE TABLE IF NOT EXISTS reviews (
+    id INTEGER PRIMARY KEY, name TEXT, message TEXT, featured INTEGER DEFAULT 0,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  );
   CREATE TABLE IF NOT EXISTS outbox (
     id INTEGER PRIMARY KEY, recipient TEXT, subject TEXT, body TEXT, sent INTEGER DEFAULT 0,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
@@ -372,6 +376,39 @@ app.post('/api/barber/appointments/:id/:action', needBarber, async (req, res) =>
 });
 app.get('/api/barber/outbox', needBarber, async (req, res) => {
   res.json(await db.prepare('SELECT * FROM outbox ORDER BY id DESC LIMIT 30').all());
+});
+
+// --- Avis clients : tout le monde peut en laisser un, les barbers choisissent leur coup de cœur
+const reviewHits = new Map();
+app.post('/api/reviews', async (req, res) => {
+  const { name, message, website } = req.body || {};
+  if (website) return res.json({ ok: true }); // champ piège rempli seulement par les robots
+  const msg = String(message || '').trim().slice(0, 600);
+  const who = String(name || '').trim().slice(0, 40);
+  if (msg.length < 3) return res.status(400).json({ error: 'Ton message est un peu court.' });
+  const now = Date.now();
+  const hits = (reviewHits.get(req.ip) || []).filter((t) => now - t < 3600e3);
+  if (hits.length >= 5) return res.status(429).json({ error: 'Doucement, tu nous as déjà écrit plusieurs fois. Réessaie plus tard.' });
+  reviewHits.set(req.ip, [...hits, now]);
+  await db.prepare('INSERT INTO reviews (name, message) VALUES (?, ?)').run(who || null, msg);
+  res.json({ ok: true });
+});
+app.get('/api/reviews/featured', async (req, res) => {
+  res.json(await db.prepare('SELECT name, message FROM reviews WHERE featured = 1 LIMIT 1').get() || null);
+});
+app.get('/api/barber/reviews', needBarber, async (req, res) => {
+  res.json(await db.prepare('SELECT * FROM reviews ORDER BY id DESC LIMIT 100').all());
+});
+app.post('/api/barber/reviews/:id/feature', needBarber, async (req, res) => {
+  const r = await db.prepare('SELECT featured FROM reviews WHERE id = ?').get(req.params.id);
+  if (!r) return res.status(404).json({ error: 'Avis introuvable.' });
+  await db.prepare('UPDATE reviews SET featured = 0').run();
+  if (!r.featured) await db.prepare('UPDATE reviews SET featured = 1 WHERE id = ?').run(req.params.id);
+  res.json({ ok: true });
+});
+app.delete('/api/barber/reviews/:id', needBarber, async (req, res) => {
+  await db.prepare('DELETE FROM reviews WHERE id = ?').run(req.params.id);
+  res.json({ ok: true });
 });
 
 // --- Classement du Tond'Clicker (on n'affiche que les rangs, jamais les scores)

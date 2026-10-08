@@ -34,18 +34,6 @@
     <div class="marquee-track" id="track"></div>
   </section>
 
-  <section class="section" style="padding-bottom:0">
-    <div class="wrap">
-      <div class="insta-banner">
-        <div>
-          <span class="marker" style="font-size:1.1rem">Le vrai QG, c'est là-bas 👇</span>
-          <h2>Suis-nous sur Insta</h2>
-          <p>Les dernières coupes, les coulisses, et parfois des vidéos dont on n'est pas fiers.</p>
-        </div>
-        <a class="btn light big-insta" id="club-insta" target="_blank" rel="noopener">📸 @ginhair38</a>
-      </div>
-    </div>
-  </section>
 
   <section class="section">
     <div class="wrap">
@@ -90,6 +78,36 @@
       <p class="muted" id="poll-total" style="margin-top:22px"></p>
     </div>
   </section>
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="insta-banner">
+        <div>
+          <span class="marker" style="font-size:1.1rem">Retrouve-nous sur Insta</span>
+          <h2>Suis-nous sur Insta</h2>
+          <p>Les dernières coupes, les coulisses, et parfois des vidéos dont on n'est pas fiers.</p>
+        </div>
+        <a class="btn light big-insta" id="club-insta" target="_blank" rel="noopener">📸 @ginhair38</a>
+      </div>
+    </div>
+  </section>
+  <section class="section" style="padding-top:0">
+    <div class="wrap reviews">
+      <form class="card" id="f-review">
+        <h2>Donnez-nous votre avis</h2>
+        <p class="muted" style="margin-top:0">Une coupe réussie, une remarque de ouf reçue, un conseil ? On lit tout (même les critiques, on encaisse).</p>
+        <label>Ton prénom <small class="muted">(facultatif)</small><input name="name" maxlength="40" autocomplete="given-name"></label>
+        <label>Ton message<textarea name="message" rows="4" maxlength="600" required></textarea></label>
+        <input name="website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+        <button class="btn">Envoyer</button>
+      </form>
+      <div class="card fav-review" id="fav-review" hidden>
+        <div class="fav-heart">❤</div>
+        <h2>Votre message qui nous touche le plus</h2>
+        <blockquote id="fav-text"></blockquote>
+        <p class="marker" id="fav-name"></p>
+      </div>
+    </div>
+  </section>
 </main>
 
 <script src="/js/common.js"></script>
@@ -132,6 +150,23 @@
   };
   if (pollPhotos.length) api(`/api/poll?voter=${voter}`).then(renderPoll).catch(() => renderPoll(null));
   else $('#poll-section').hidden = true;
+
+  // Avis : envoi + message coup de cœur choisi par les barbers
+  $('#f-review').onsubmit = async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    try {
+      await api('/api/reviews', { body: { name: f.name.value, message: f.message.value, website: f.website.value } });
+      f.reset();
+      toast('Merci ! Ton message est bien arrivé chez les barbers.');
+    } catch (err) { toast(err.message); }
+  };
+  api('/api/reviews/featured').then((r) => {
+    if (!r) return;
+    $('#fav-text').textContent = `« ${r.message} »`;
+    $('#fav-name').textContent = r.name ? `${r.name}` : 'Un client anonyme';
+    $('#fav-review').hidden = false;
+  }).catch(() => {});
   const track = $('#track');
   [...photos, ...photos].forEach((p, i) =>
     track.appendChild(polaroid(p, i, () => lightbox(photos, i % photos.length))));

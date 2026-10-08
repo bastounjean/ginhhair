@@ -57,6 +57,12 @@
         <div id="planning"></div>
       </div>
 
+      <div class="card" style="margin-top:30px">
+        <h2>Avis des clients</h2>
+        <p class="muted" style="margin-top:0">Clique sur ❤ pour afficher un message sur l'accueil (« Votre message qui nous touche le plus »). Un seul à la fois, re-clique pour l'enlever.</p>
+        <div id="reviews"></div>
+      </div>
+
       <details class="card" style="margin-top:30px">
         <summary><b>Derniers emails envoyés</b> <span class="muted">(utile pour vérifier ce que reçoivent les clients)</span></summary>
         <div id="outbox"></div>
@@ -136,7 +142,30 @@
       <div class="appt"><span class="when">${esc(m.created_at)}</span><span><b>${esc(m.subject)}</b><br>
       <small class="muted">À ${esc(m.recipient)} · ${m.sent ? 'envoyé' : 'non envoyé (SMTP pas configuré)'}</small></span>
       <span class="note" style="white-space:pre-line">${esc(m.body)}</span></div>`).join('') || '<p class="muted">Aucun email.</p>';
+    loadReviews();
     if (planning) planning.reload();
+  }
+
+  async function loadReviews() {
+    const list = await api('/api/barber/reviews');
+    $('#reviews').innerHTML = list.length ? '' : '<p class="muted">Aucun avis pour l’instant.</p>';
+    list.forEach((r) => {
+      const d = document.createElement('div');
+      d.className = 'appt' + (r.featured ? ' featured' : '');
+      d.innerHTML = `<span class="when">${esc(r.created_at.slice(0, 10))}</span>
+        <span><b>${esc(r.name || 'Anonyme')}</b><br><span style="white-space:pre-line">${esc(r.message)}</span></span>
+        <span class="actions"></span>`;
+      const heart = document.createElement('button');
+      heart.className = 'btn small ' + (r.featured ? '' : 'light');
+      heart.textContent = r.featured ? '❤ Affiché' : '❤ Afficher';
+      heart.onclick = async () => { await api(`/api/barber/reviews/${r.id}/feature`, { method: 'POST' }); loadReviews(); };
+      const del = document.createElement('button');
+      del.className = 'btn small ghost';
+      del.textContent = 'Supprimer';
+      del.onclick = async () => { if (confirm('Supprimer cet avis ?')) { await api(`/api/barber/reviews/${r.id}`, { method: 'DELETE' }); loadReviews(); } };
+      $('.actions', d).append(heart, del);
+      $('#reviews').appendChild(d);
+    });
   }
 
   async function load() {

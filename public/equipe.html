@@ -106,7 +106,8 @@
       <div class="board"></div>`;
     const board = $('.board', el);
     if (b.photos.length) {
-      b.photos.forEach((p, i) => board.appendChild(polaroid(p, i, () => lightbox(b.photos, i))));
+      const pics = b.photos.map((p) => [p[0], `Par ${b.name}`]);
+      pics.forEach((p, i) => board.appendChild(polaroid(p, i, () => lightbox(pics, i))));
     } else {
       board.innerHTML = `<div class="empty">Photos bientôt disponibles.<br>${b.name} est encore en train de tondre.</div>`;
     }

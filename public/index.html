@@ -108,7 +108,7 @@
 <script src="/js/common.js"></script>
 <script>
   // Défilé infini : toutes les photos de l'équipe, doublées pour boucler
-  const photos = Object.values(TEAM).flatMap((b) => b.photos.map((p) => [p[0], `${p[1]} · ${b.name}`]));
+  const photos = Object.values(TEAM).flatMap((b) => b.photos.map((p) => [p[0], `Par ${b.name}`]));
   $('#club-insta').href = instaUrl(CLUB_INSTA);
   // La coupe du mois : vote anonyme, un jeton par navigateur
   const pollPhotos = COUPE_DU_MOIS.map((file) => {
@@ -127,7 +127,7 @@
     $('#poll').innerHTML = '';
     pollPhotos.forEach((p, i) => {
       const pct = total ? Math.round((res.counts[p.file] || 0) * 100 / total) : 0;
-      const f = polaroid([p.file, `${p.caption} · ${p.barber.name}`], i, () => vote(p.file));
+      const f = polaroid([p.file, `Par ${p.barber.name}`], i, () => vote(p.file));
       f.classList.add('poll-choice');
       if (voted) {
         f.classList.toggle('mine', res.mine === p.file);

@@ -45,11 +45,11 @@ const TEAM = {
     debuts: {
       photo: 'carnage-gatien.jpg', caption: 'Coupe n°1 de Gatien · RIP',
       report: [
-        ['Victime', 'Un cobaye volontaire (il ne savait pas).'],
-        ['Matériel utilisé', 'Une tondeuse et beaucoup trop de confiance.'],
-        ['Constat', 'Un dégradé qui monte en escalier et une oreille qui a vu la lame de près.'],
-        ['Bilan', 'Une petite trace rouge derrière l’oreille, souvenir à vie.'],
-        ['Leçon apprise', 'Les oreilles, ça se plie avant de passer la tondeuse.'],
+        ['Victime', 'Evan, post-traumatique.'],
+        ['Matériel utilisé', "On n'ose même pas savoir."],
+        ['Constat', 'On ne peut pas appeler ça un constat.'],
+        ['Bilan', 'Evan ne reviendra pas chez GI N’ HAIR.'],
+        ['Leçon apprise', "C'était la faute de l'implantation, en vrai."],
       ],
     },
     photos: [['gatien1.jpg', 'Taper bouclé'], ['gatien2.jpg', 'Bouclé au soleil'], ['gatien3.jpg', 'Coupe au bol revisitée'], ['gatien4.jpg', 'Mèches blondes']],

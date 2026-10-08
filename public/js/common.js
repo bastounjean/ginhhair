@@ -42,7 +42,7 @@ const TEAM = {
     diploma: ['CAP Tonte de pelouse synthétique', 'Option : taille de haies en forme de dauphin'],
     bio: "Gatien entretient une relation presque mystique avec la ligne droite. Ses contours sont si nets que les règles de la résidence viennent lui demander conseil. Il parle peu pendant la coupe : il se concentre (ou il dort debout, on n'a jamais tranché).",
     stats: [['Spécialité', 'Les contours au millimètre'], ['Arme favorite', 'Le rasoir de précision'], ['Temps moyen', '32 min (avec débrief)'], ['Niveau de stress', 'Zéro, c’est lui qui tient la tondeuse']],
-    photos: [],
+    photos: [['gatien1.jpg', 'Taper bouclé']],
   },
   baptiste: {
     name: 'Baptiste', color: '#2f8f5b',
@@ -77,6 +77,7 @@ const TEAM = {
   gajelle: {
     name: 'Gajelle', color: '#7a3fa0', sub: true,
     title: 'Joker de luxe',
+    insta: '_bttgael',
     avatar: 'avatar-gajelle.jpg',
     fifa: { note: 77, stats: [['DÉG', 68], ['CTR', 71], ['VIT', 99], ['PAT', 62], ['TCH', 96], ['DIP', 0]] },
     bio: "Gajelle attend sur le banc depuis le premier jour, tondeuse chargée et antennes de papillon sur la tête. Le jour où un titulaire se tord le poignet en plein dégradé, c'est Gajelle qui rentre sur le terrain. En attendant, l'échauffement se fait sur des brosses à cheveux.",

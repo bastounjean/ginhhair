@@ -78,7 +78,7 @@ const TEAM = {
     bio: "Baptiste a calculé que 87 % des étudiants de Grenoble avaient des cheveux. Il a donc décidé d'agir. Sa seule mesure de satisfaction : le nombre de fois où le client répète « oua tu m'as tué bâtard ».",
     stats: [['Spécialité', "Dire que, en vrai, c'est pas si mal alors que le gars n'a plus de crâne"], ['Outil préféré', 'Fortnite'], ['Taux de retour client', '100 % (les cheveux repoussent)'], ['Diplôme', "Aucun, mais il y met beaucoup d'amour"]],
     photos: [
-      ['coupe10.jpg', 'Mid fade du soir'], ['coupe3.jpg', 'Mèche maîtrisée'], ['coupe5.jpg', 'Texture naturelle'],
+      ['coupe10.jpg', 'Mid fade du soir'], ['coupe11.jpg', 'Taper bouclé'], ['coupe5.jpg', 'Texture naturelle'],
       ['coupe6.jpg', 'Mid fade + bière'], ['coupe8.jpg', 'Blond surfeur'], ['coupe9.jpg', 'Taper texturé'],
       ['coupe2.jpg', 'Nuque nette'], ['coupe1.jpg', 'Taper blond platine'],
     ],

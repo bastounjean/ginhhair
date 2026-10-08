@@ -177,3 +177,41 @@ function polaroid(photo, i, onClick) {
 }
 
 renderChrome();
+
+// Musique de L'équipe. Les navigateurs refusent de lancer du son sans clic : quand on clique sur
+// « L'équipe » depuis une autre page, on lance la musique dans ce clic puis on affiche la page sans recharger.
+function teamAudio() {
+  if (!window._teamAudio) {
+    window._teamAudio = new Audio(`/music/${TEAM_MUSIC}`);
+    window._teamAudio.volume = 0.6;
+    window._teamAudio.loop = true;
+  }
+  return window._teamAudio;
+}
+document.addEventListener('click', async (e) => {
+  const a = e.target.closest('a[href="/equipe"]');
+  if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+  if (location.pathname === '/equipe' || location.pathname.startsWith('/jeu')) return; // le jeu tourne en boucle : vraie navigation
+  e.preventDefault();
+  teamAudio().play().catch(() => {});
+  try {
+    const doc = new DOMParser().parseFromString(await (await fetch('/equipe')).text(), 'text/html');
+    document.title = doc.title;
+    const footer = $('.site-footer');
+    [...document.body.children].forEach((el) => { if (!el.matches('.site-header, .site-footer, #toast')) el.remove(); });
+    [...doc.body.children].forEach((el) => { if (el.tagName !== 'SCRIPT') footer.before(document.adoptNode(el)); });
+    $('.site-header .nav').classList.remove('open');
+    document.querySelectorAll('.site-header .nav a').forEach((l) => l.classList.toggle('active', l.getAttribute('href') === '/equipe'));
+    history.pushState(null, '', '/equipe');
+    window._softNav = true;
+    scrollTo(0, 0);
+    doc.querySelectorAll('script:not([src])').forEach((old) => {
+      const sc = document.createElement('script');
+      sc.textContent = old.textContent;
+      document.body.appendChild(sc);
+    });
+  } catch {
+    location.href = '/equipe';
+  }
+});
+addEventListener('popstate', () => { if (window._softNav) location.reload(); });

@@ -35,6 +35,7 @@
 </div>
 <script src="/js/common.js"></script>
 <script>
+(() => {
   const root = $('#team');
   const stats = (b) => b.fifa.stats.map(([k, v]) => `<li><b>${v}</b> ${k}</li>`).join('');
   for (const [slug, b] of Object.entries(TEAM)) {
@@ -54,9 +55,7 @@
 
   // Musique de la page : se lance dès l'arrivée. Si le navigateur bloque le son tant qu'on n'a pas
   // touché la page (iPhone notamment), elle démarre au premier clic ou appui.
-  const audio = new Audio(`/music/${TEAM_MUSIC}`);
-  audio.volume = 0.6;
-  audio.loop = true;
+  const audio = teamAudio();
   let muted = false;
   const speaker = '<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/>';
   const mute = document.createElement('button');
@@ -64,7 +63,7 @@
   mute.type = 'button';
   const label = () => {
     const on = !muted && !audio.paused;
-    mute.innerHTML = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${speaker}${on ? '<path d="M16 9l5 6M21 9l-5 6"/>' : '<path d="M16 9.5a4 4 0 0 1 0 5M18.5 7a7.5 7.5 0 0 1 0 10"/>'}</svg>`;
+    mute.innerHTML = `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${speaker}${on ? '<path d="M16 9.5a4 4 0 0 1 0 5M18.5 7a7.5 7.5 0 0 1 0 10"/>' : '<path d="M16 9l5 6M21 9l-5 6"/>'}</svg>`;
     mute.title = mute.ariaLabel = on ? 'Couper la musique' : 'Lancer la musique';
   };
   audio.onplay = audio.onpause = label;
@@ -151,6 +150,7 @@
   $('#warn-no').onclick = () => { $('#warn').classList.remove('open'); toast('Sage décision.'); };
   $('#warn').onclick = (e) => { if (e.target.id === 'warn') e.target.classList.remove('open'); };
   if (location.hash) open(location.hash.slice(1), true);
+})();
 </script>
 </body>
 </html>

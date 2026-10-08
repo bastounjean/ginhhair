@@ -34,6 +34,7 @@ const TEAM = {
     fifa: { note: 85, stats: [['DÉG', 84], ['CTR', 97], ['VIT', 70], ['PAT', 95], ['TCH', 41], ['DIP', 0]] },
     insta: 'gatien.clv',
     instaNote: 'Ajoute-le sur Pokémon Go plutôt',
+    avatar: 'avatar-gatien.jpg',
     diploma: ['CAP Tonte de pelouse synthétique', 'Option : taille de haies en forme de dauphin'],
     bio: "Gatien entretient une relation presque mystique avec la ligne droite. Ses contours sont si nets que les règles de la résidence viennent lui demander conseil. Il parle peu pendant la coupe : il se concentre (ou il dort debout, on n'a jamais tranché).",
     stats: [['Spécialité', 'Les contours au millimètre'], ['Arme favorite', 'Le rasoir de précision'], ['Temps moyen', '32 min (avec débrief)'], ['Niveau de stress', 'Zéro, c’est lui qui tient la tondeuse']],

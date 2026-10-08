@@ -12,7 +12,7 @@ const CLUB_INSTA = 'ginhair38';
 const instaUrl = (h) => `https://www.instagram.com/${h}/`;
 // « La coupe du mois » sur l'accueil : les 3 coupes en compétition (noms des photos de TEAM ci-dessous).
 // Les votes repartent à zéro chaque mois. Pensez à mettre ici vos 3 dernières coupes ajoutées.
-const COUPE_DU_MOIS = ['coupe8.jpg', 'coupe9.jpg', 'coupe10.jpg'];
+const COUPE_DU_MOIS = ['gatien1.jpg', 'coupe9.jpg', 'coupe10.jpg'];
 const snapUrl = (h) => `https://www.snapchat.com/add/${h}`;
 
 // Musique de la page L'équipe (fichier dans public/music), lancée dès l'arrivée et jouée en boucle.

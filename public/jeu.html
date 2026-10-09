@@ -11,7 +11,7 @@
 <main class="section">
   <div class="wrap">
     <h1 class="outlined">Tond'Clicker</h1>
-    <p class="lead">Clique sur les cheveux de l'équipe pour les couper, mèche par mèche. Achète du matos, embauche l'équipe, et deviens la légende capillaire de Grenoble. Aucun client n'a été blessé pendant le développement de ce jeu.</p>
+    <p class="lead">Clique sur les cheveux des clients pour les couper, mèche par mèche. Achète du matos, embauche l'équipe, et deviens la légende capillaire de Grenoble. Aucun client n'a été blessé pendant le développement de ce jeu.</p>
 
     <div class="game" style="margin-top:24px">
       <div class="card" style="text-align:center">
@@ -60,6 +60,7 @@
 </main>
 
 <script src="/js/common.js"></script>
+<script src="/js/clients.js"></script>
 <script>
   const ITEMS = [
     { id: 'peigne', ico: '🪮', name: 'Peigne du Monoprix', desc: '+1 mèche par clic', cost: 15, click: 1 },
@@ -81,13 +82,7 @@
     'Il voulait un dégradé. Il aura un dégradé. Quelque part.', 'Le client a fermé les yeux. Mauvais signe.',
     'Tu viens d’inventer une nouvelle coupe. Personne ne la veut.', 'Ta mère serait fière. Le client, moins.',
   ];
-  // Les clients, ce sont nous : chaque tête a un calque crâne et un calque cheveux
-  const HEADS = [
-    { id: 'anton', name: 'Anton', hair: '#3a2418' },
-    { id: 'gatien', name: 'Gatien', hair: '#24201c' },
-    { id: 'baptiste', name: 'Baptiste', hair: '#5a3a1a' },
-  ];
-  const head = () => HEADS[S.clients % HEADS.length];
+  const head = () => CLIENTS[S.clients % CLIENTS.length];  // dessinés dans /js/clients.js
   const CUTS_PER_CLIENT = 25;
 
   let S = { score: 0, total: 0, clients: 0, cuts: 0, owned: {} };
@@ -159,7 +154,7 @@
     const h = head();
     loading = true;
     $('#client-name').textContent = `Client : ${h.name}`;
-    $('#head-base').src = `/img/heads/${h.id}-base.webp`;
+    $('#head-base').src = 'data:image/svg+xml,' + encodeURIComponent(clientBase(h));
     const hi = new Image();
     hi.onload = () => {
       cv.width = hi.naturalWidth; cv.height = hi.naturalHeight;
@@ -197,7 +192,7 @@
       ctx.putImageData(img, 0, 0);
       loading = false;
     };
-    hi.src = `/img/heads/${h.id}-hair.webp`;
+    hi.src = 'data:image/svg+xml,' + encodeURIComponent(clientHair(h));
   }
   function clearChunk(k) {
     for (const i of chunks[k].px) img.data[i * 4 + 3] = 0;
@@ -222,7 +217,7 @@
     $('#head').classList.remove('snip'); void $('#head').offsetWidth; $('#head').classList.add('snip');
     S.cuts++;
     if (S.cuts >= CUTS_PER_CLIENT) {
-      const done = head().name;
+      const done = head().name.split(',')[0];
       S.cuts = 0; S.clients++;
       const tip = Math.ceil(perClick() * 10 + perSec() * 5);
       gain(tip);

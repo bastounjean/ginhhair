@@ -11,7 +11,7 @@
 <main class="section">
   <div class="wrap">
     <h1 class="outlined">Tond'Clicker</h1>
-    <p class="lead">Clique sur le crâne pour couper des mèches. Achète du matos, embauche l'équipe, et deviens la légende capillaire de Grenoble. Aucun client n'a été blessé pendant le développement de ce jeu.</p>
+    <p class="lead">Clique sur les cheveux de l'équipe pour les couper, mèche par mèche. Achète du matos, embauche l'équipe, et deviens la légende capillaire de Grenoble. Aucun client n'a été blessé pendant le développement de ce jeu.</p>
 
     <div class="game" style="margin-top:24px">
       <div class="card" style="text-align:center">
@@ -21,31 +21,12 @@
         <div class="muted" style="font-size:.9rem">Clients servis : <b id="clients">0</b></div>
 
         <div class="head-zone" id="zone" style="margin-top:12px">
+          <div class="client-name" id="client-name"></div>
           <button class="head-btn" id="head" aria-label="Couper les cheveux">
-            <svg viewBox="0 0 300 330">
-              <!-- cape -->
-              <path d="M40 330 Q60 250 150 245 Q240 250 260 330 Z" fill="#1d1416"/>
-              <!-- cou -->
-              <rect x="125" y="215" width="50" height="40" fill="#e9b48f"/>
-              <!-- oreilles -->
-              <ellipse cx="72" cy="160" rx="16" ry="24" fill="#e9b48f" stroke="#1d1416" stroke-width="4"/>
-              <ellipse cx="228" cy="160" rx="16" ry="24" fill="#e9b48f" stroke="#1d1416" stroke-width="4"/>
-              <!-- visage -->
-              <ellipse cx="150" cy="155" rx="78" ry="88" fill="#f2c4a0" stroke="#1d1416" stroke-width="5"/>
-              <!-- cheveux (rétrécissent à chaque clic) -->
-              <g id="hair" style="transform-origin:150px 110px;transition:transform .12s">
-                <path id="hair-path" d="M70 125 Q60 40 150 30 Q245 35 232 125 Q215 85 190 95 Q170 70 150 92 Q128 68 110 95 Q85 85 70 125 Z"
-                      fill="#3b2a1e" stroke="#1d1416" stroke-width="5" stroke-linejoin="round"/>
-              </g>
-              <!-- yeux -->
-              <g id="eyes">
-                <circle cx="122" cy="155" r="9" fill="#1d1416"/><circle cx="178" cy="155" r="9" fill="#1d1416"/>
-                <circle cx="125" cy="152" r="3" fill="#fff"/><circle cx="181" cy="152" r="3" fill="#fff"/>
-              </g>
-              <path d="M110 135 Q122 128 134 135 M166 135 Q178 128 190 135" stroke="#1d1416" stroke-width="5" fill="none" stroke-linecap="round"/>
-              <!-- bouche -->
-              <path id="mouth" d="M125 195 Q150 215 175 195" stroke="#1d1416" stroke-width="5" fill="none" stroke-linecap="round"/>
-            </svg>
+            <span class="head-stack">
+              <img id="head-base" alt="" draggable="false">
+              <canvas id="head-hair"></canvas>
+            </span>
           </button>
         </div>
         <div style="background:#fff;border:2px solid var(--ink);border-radius:999px;height:16px;overflow:hidden;margin-top:6px">
@@ -100,7 +81,13 @@
     'Il voulait un dégradé. Il aura un dégradé. Quelque part.', 'Le client a fermé les yeux. Mauvais signe.',
     'Tu viens d’inventer une nouvelle coupe. Personne ne la veut.', 'Ta mère serait fière. Le client, moins.',
   ];
-  const HAIR = ['#3b2a1e', '#d9b25a', '#1d1416', '#8a3b1c', '#f0e2b6', '#6a4b32'];
+  // Les clients, ce sont nous : chaque tête a un calque crâne et un calque cheveux
+  const HEADS = [
+    { id: 'anton', name: 'Anton', hair: '#3a2418' },
+    { id: 'gatien', name: 'Gatien', hair: '#24201c' },
+    { id: 'baptiste', name: 'Baptiste', hair: '#5a3a1a' },
+  ];
+  const head = () => HEADS[S.clients % HEADS.length];
   const CUTS_PER_CLIENT = 25;
 
   let S = { score: 0, total: 0, clients: 0, cuts: 0, owned: {} };
@@ -122,8 +109,6 @@
     $('#clients').textContent = S.clients;
     $('#rank').textContent = '🏅 ' + RANKS.filter(([min]) => S.total >= min).pop()[1];
     $('#progress').style.width = (100 * S.cuts / CUTS_PER_CLIENT) + '%';
-    $('#hair').style.transform = `scaleY(${1 - 0.85 * S.cuts / CUTS_PER_CLIENT})`;
-    $('#hair-path').setAttribute('fill', HAIR[S.clients % HAIR.length]);
     $$('.item', $('#shop')).forEach((b) => {
       const it = ITEMS.find((x) => x.id === b.dataset.id);
       b.disabled = S.score < price(it);
@@ -158,7 +143,7 @@
     for (let i = 0; i < 5; i++) {
       const h = document.createElement('div');
       h.className = 'hair-bit';
-      h.style.background = HAIR[S.clients % HAIR.length];
+      h.style.background = head().hair;
       h.style.left = x + (Math.random() * 40 - 20) + 'px'; h.style.top = y + 'px';
       h.style.setProperty('--dx', (Math.random() * 120 - 60) + 'px');
       h.style.setProperty('--rot', (Math.random() * 720 - 360) + 'deg');
@@ -167,21 +152,88 @@
     }
   }
 
+  // --- Calque cheveux découpé en mèches : chaque clic enlève la mèche la plus proche
+  const cv = $('#head-hair'), ctx = cv.getContext('2d', { willReadFrequently: true });
+  let img = null, chunks = [], loading = false;
+  function loadHead() {
+    const h = head();
+    loading = true;
+    $('#client-name').textContent = `Client : ${h.name}`;
+    $('#head-base').src = `/img/heads/${h.id}-base.webp`;
+    const hi = new Image();
+    hi.onload = () => {
+      cv.width = hi.naturalWidth; cv.height = hi.naturalHeight;
+      ctx.clearRect(0, 0, cv.width, cv.height); ctx.drawImage(hi, 0, 0);
+      img = ctx.getImageData(0, 0, cv.width, cv.height);
+      const W = cv.width, d = img.data, px = [];
+      for (let i = 0; i < W * cv.height; i++) if (d[i * 4 + 3] > 10) px.push(i);
+      // graines réparties sur les cheveux (échantillonnage du point le plus éloigné)
+      const sample = px.filter((_, k) => k % 7 === 0);
+      const seeds = [sample[0]];
+      const dist = sample.map(() => Infinity);
+      while (seeds.length < CUTS_PER_CLIENT) {
+        const s0 = seeds[seeds.length - 1], sx = s0 % W, sy = (s0 / W) | 0;
+        let best = 0;
+        for (let k = 0; k < sample.length; k++) {
+          const x = sample[k] % W - sx, y = ((sample[k] / W) | 0) - sy;
+          dist[k] = Math.min(dist[k], x * x + y * y);
+          if (dist[k] > dist[best]) best = k;
+        }
+        seeds.push(sample[best]);
+      }
+      chunks = seeds.map((s0) => ({ x: s0 % W, y: (s0 / W) | 0, px: [] }));
+      for (const i of px) {
+        const x = i % W, y = (i / W) | 0;
+        let b = 0, bd = Infinity;
+        for (let c = 0; c < chunks.length; c++) {
+          const dx = chunks[c].x - x, dy = chunks[c].y - y, dd = dx * dx + dy * dy;
+          if (dd < bd) { bd = dd; b = c; }
+        }
+        chunks[b].px.push(i);
+      }
+      // reprise d'une partie : on enlève d'abord les mèches du haut
+      chunks.sort((a, b) => a.y - b.y);
+      for (let k = 0; k < S.cuts && chunks.length; k++) clearChunk(0);
+      ctx.putImageData(img, 0, 0);
+      loading = false;
+    };
+    hi.src = `/img/heads/${h.id}-hair.webp`;
+  }
+  function clearChunk(k) {
+    for (const i of chunks[k].px) img.data[i * 4 + 3] = 0;
+    chunks.splice(k, 1);
+  }
+  function cutNear(cx, cy) {
+    if (!chunks.length) return;
+    let b = 0, bd = Infinity;
+    chunks.forEach((c, k) => { const dd = (c.x - cx) ** 2 + (c.y - cy) ** 2; if (dd < bd) { bd = dd; b = k; } });
+    clearChunk(b);
+    ctx.putImageData(img, 0, 0);
+  }
+
   $('#head').addEventListener('click', (e) => {
-    const r = $('#zone').getBoundingClientRect();
-    const x = (e.clientX || r.left + r.width / 2) - r.left, y = (e.clientY || r.top + 120) - r.top;
+    if (loading) return;
+    const r = $('#zone').getBoundingClientRect(), cr = cv.getBoundingClientRect();
+    const ex = e.clientX || cr.left + cr.width / 2, ey = e.clientY || cr.top + cr.height / 4;
+    const x = ex - r.left, y = ey - r.top;
     gain(perClick());
     burst(x, y, '+' + fmt(perClick()));
+    cutNear((ex - cr.left) * cv.width / cr.width, (ey - cr.top) * cv.height / cr.height);
+    $('#head').classList.remove('snip'); void $('#head').offsetWidth; $('#head').classList.add('snip');
     S.cuts++;
     if (S.cuts >= CUTS_PER_CLIENT) {
+      const done = head().name;
       S.cuts = 0; S.clients++;
       const tip = Math.ceil(perClick() * 10 + perSec() * 5);
       gain(tip);
-      toast(`Client n°${S.clients} servi ! Pourboire : +${fmt(tip)} 💸`);
+      toast(`${done} est tout lisse ! Pourboire : +${fmt(tip)} 💸`);
       $('#quip').textContent = QUIPS[Math.floor(Math.random() * QUIPS.length)];
+      loading = true;
+      setTimeout(loadHead, 900);
     }
     save(); render();
   });
+  loadHead();
 
   // Production automatique
   let last = performance.now();
@@ -215,7 +267,7 @@
   $('#reset').onclick = () => {
     if (!confirm('Tout effacer et repartir de zéro ?')) return;
     S = { score: 0, total: 0, clients: 0, cuts: 0, owned: {} };
-    save(); render();
+    save(); render(); loadHead();
   };
   // Classement en direct
   let player = null;

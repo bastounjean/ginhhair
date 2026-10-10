@@ -108,6 +108,19 @@
       </div>
       <div class="board"></div>`;
     const board = $('.board', el);
+    if (b.guests) {
+      const vip = document.createElement('section');
+      vip.className = 'guests';
+      vip.innerHTML = '<h3 class="guests-title">★ Special Guest ★</h3><div class="guests-row"></div>';
+      const pics = b.guests.map((g) => [g[0], '']);
+      b.guests.forEach((g, i) => {
+        const f = polaroid([g[0], g[1]], i, () => lightbox(pics, i));
+        f.classList.add('gold');
+        f.insertAdjacentHTML('afterbegin', '<span class="stars">★ ★ ★</span>');
+        $('.guests-row', vip).appendChild(f);
+      });
+      board.before(vip);
+    }
     if (b.photos.length) {
       const pics = b.photos.map((p) => [p[0], '']);
       pics.forEach((p, i) => board.appendChild(polaroid(p, i, () => lightbox(pics, i))));

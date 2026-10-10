@@ -222,12 +222,28 @@ textarea { min-height: 80px; resize: vertical; }
   background: rgba(91, 20, 36, .07); border-radius: 22px; border: 3px solid rgba(58,11,22,.15);
 }
 .board .polaroid { width: 200px; }
+/* Special Guest : cadres dorés au-dessus des coupes */
+.guests { margin-bottom: 22px; padding: 18px 10px 26px; border-radius: 22px; text-align: center;
+  background: radial-gradient(circle at 50% 0, rgba(255,215,90,.35), transparent 70%), rgba(58,11,22,.9); border: 3px solid #d4a72c; }
+.guests-title { font-family: 'Titan One', sans-serif; font-size: 1.7rem; margin: 0 0 16px; letter-spacing: .04em;
+  background: linear-gradient(180deg, #fff3b0, #f2c94c 45%, #b8860b); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,.4)); }
+.guests-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 26px; }
+.polaroid.gold { width: 230px; position: relative; background: linear-gradient(135deg, #fff6c8, #f2c94c 35%, #c99a1e 65%, #fff1a8);
+  box-shadow: 0 0 0 3px #8a6410, 0 14px 30px rgba(0,0,0,.45), 0 0 26px rgba(242,201,76,.55); }
+.polaroid.gold figcaption { font-family: 'Titan One', sans-serif; color: #3a2405; text-transform: uppercase; letter-spacing: .05em; }
+.polaroid.gold .stars { position: absolute; top: -22px; left: 0; right: 0; text-align: center; font-size: 1.3rem; color: #f2c94c;
+  text-shadow: 0 0 6px rgba(255,220,100,.9), 0 2px 0 #8a6410; letter-spacing: 4px; pointer-events: none; z-index: 3; }
 .board .empty { width: 220px; aspect-ratio: 3/4; display: grid; place-items: center; text-align: center; padding: 20px;
   font-family: 'Permanent Marker'; color: var(--muted); border: 3px dashed var(--muted); border-radius: 10px; transform: rotate(2deg); }
 @media (max-width: 860px) {
   .barber { grid-template-columns: 1fr; }
   .barber .id-card { position: static; }
   .board .polaroid { width: 44%; padding: 8px 8px 38px; }
+  .polaroid.gold { width: 44%; padding: 8px 8px 38px; }
+  .guests-row { gap: 14px; }
+  .polaroid.gold figcaption { font-size: .78rem; letter-spacing: 0; white-space: nowrap; }
+  .guests-title { font-size: 1.35rem; }
 }
 
 /* Visionneuse */

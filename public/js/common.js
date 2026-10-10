@@ -41,6 +41,8 @@ const TEAM = {
         ['Leçon apprise', 'Toujours demander avant de laisser l’arrière.'],
       ],
     },
+    // « Special Guest » : coupes de personnalités, mises en avant en haut de la fiche
+    guests: [['guest-paul-magnier.jpg', 'Paul Magnier'], ['guest-turbo-tanguy.jpg', 'Turbo Tanguy']],
     photos: [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => [`anton${n}.jpg`, '']),
   },
   gatien: {

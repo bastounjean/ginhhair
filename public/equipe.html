@@ -106,7 +106,7 @@
         <ul class="stats">${b.stats.map(([k, v]) => `<li><span class="muted">${esc(k)}</span><b>${esc(v)}</b></li>`).join('')}</ul>
         ${b.sub ? '' : `<p style="margin-top:18px"><a class="btn small" style="background:${b.color}" href="/rdv?barber=${slug}">RDV avec ${b.name}</a></p>`}
       </div>
-      <div class="board"></div>`;
+      <div class="board-col"><div class="board"></div></div>`;
     const board = $('.board', el);
     if (b.guests) {
       const vip = document.createElement('section');

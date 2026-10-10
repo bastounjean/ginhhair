@@ -221,6 +221,7 @@ textarea { min-height: 80px; resize: vertical; }
   display: flex; flex-wrap: wrap; gap: 26px 22px; justify-content: center; padding: 20px 6px;
   background: rgba(91, 20, 36, .07); border-radius: 22px; border: 3px solid rgba(58,11,22,.15);
 }
+.board-col { min-width: 0; }
 .board .polaroid { width: 200px; }
 /* Special Guest : cadres dorés au-dessus des coupes */
 .guests { margin-bottom: 22px; padding: 18px 10px 26px; border-radius: 22px; text-align: center;

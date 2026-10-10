@@ -90,6 +90,7 @@ const TEAM = {
     diploma: ['Master en optimisation des flux capillaires', 'Spécialité cheveu rebelle (non reconnu par l’État)'],
     bio: "Baptiste a calculé que 87 % des étudiants de Grenoble avaient des cheveux. Il a donc décidé d'agir. Sa seule mesure de satisfaction : le nombre de fois où le client répète « ouah, tu m'as tué, bâtard ».",
     stats: [['Spécialité', "Dire que, en vrai, ce n'est pas si mal alors que le gars n'a plus de crâne"], ['Outil préféré', 'Fortnite'], ['Taux de retour client', '100 % (les cheveux repoussent)'], ['Diplôme', "Aucun, mais il y met beaucoup d'amour"]],
+    guests: [['guest-le-daron.jpg', 'Le Daron']],
     photos: [
       ['coupe10.jpg', 'Mid fade du soir'], ['coupe11.jpg', 'Taper bouclé'], ['coupe5.jpg', 'Texture naturelle'],
       ['coupe6.jpg', 'Mid fade + bière'], ['coupe8.jpg', 'Blond surfeur'], ['coupe9.jpg', 'Taper texturé'],

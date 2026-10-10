@@ -62,6 +62,9 @@ const SCHEMA = `
     id INTEGER PRIMARY KEY, name TEXT, message TEXT, featured INTEGER DEFAULT 0,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
+  CREATE TABLE IF NOT EXISTS visits (
+    day TEXT, visitor TEXT, views INTEGER DEFAULT 1, PRIMARY KEY (day, visitor)
+  );
   CREATE TABLE IF NOT EXISTS outbox (
     id INTEGER PRIMARY KEY, recipient TEXT, subject TEXT, body TEXT, sent INTEGER DEFAULT 0,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
@@ -169,6 +172,23 @@ const app = express();
 app.use(express.json());
 // L'ancienne page « Les débuts » est maintenant dans les fiches de l'équipe
 app.get('/debuts', (req, res) => res.redirect(301, '/equipe#baptiste'));
+// Compteur de visites : une ligne par visiteur et par jour (empreinte anonyme, pas de cookie)
+const VISIT_SALT = process.env.VISIT_SALT || 'ginhair-visites'; // fixe pour survivre aux redémarrages de Render
+const BOT_UA = /bot|crawl|spider|slurp|preview|curl|wget|headless|monitor|python|go-http|node-fetch|axios/i;
+app.use((req, res, next) => {
+  const p = req.path;
+  if (req.method === 'GET' && !p.startsWith('/api') && !p.startsWith('/barber') && !/\.(?!html$)[a-z0-9]+$/i.test(p)) {
+    const ua = req.headers['user-agent'] || '';
+    if (ua && !BOT_UA.test(ua)) {
+      const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+      const day = nowLocal().slice(0, 10);
+      const visitor = crypto.createHash('sha256').update(`${VISIT_SALT}|${day}|${ip}|${ua}`).digest('hex').slice(0, 16);
+      db.prepare('INSERT INTO visits (day, visitor) VALUES (?, ?) ON CONFLICT(day, visitor) DO UPDATE SET views = views + 1')
+        .run(day, visitor).catch(() => {});
+    }
+  }
+  next();
+});
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
 
 function parseCookies(req) {
@@ -403,6 +423,13 @@ app.post('/api/reviews', async (req, res) => {
 });
 app.get('/api/reviews/featured', async (req, res) => {
   res.json(await db.prepare('SELECT name, message FROM reviews WHERE featured = 1 LIMIT 1').get() || null);
+});
+app.get('/api/barber/stats', needBarber, async (req, res) => {
+  const since = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const sum = (from) => db.prepare('SELECT COUNT(*) AS visitors, COALESCE(SUM(views), 0) AS views FROM visits WHERE day >= ?').get(from);
+  const today = nowLocal().slice(0, 10);
+  const days = await db.prepare('SELECT day, COUNT(*) AS visitors, SUM(views) AS views FROM visits WHERE day >= ? GROUP BY day ORDER BY day').all(since(13));
+  res.json({ today: await sum(today), week: await sum(since(6)), month: await sum(since(29)), total: await sum('0000'), days });
 });
 app.get('/api/barber/reviews', needBarber, async (req, res) => {
   res.json(await db.prepare('SELECT * FROM reviews ORDER BY id DESC LIMIT 100').all());

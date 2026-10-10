@@ -543,3 +543,16 @@ textarea { min-height: 80px; resize: vertical; }
 .me-rank { text-align: center; font-weight: 600; margin: 4px 0 0; }
 .podium3 { border-bottom: 4px solid var(--ink); margin-bottom: 26px; }
 @media (max-width: 560px) { .podium3 { gap: 6px; } .podium3 .who b { font-size: .85rem; } .podium3 .who span { font-size: .8rem; } }
+
+/* Espace barber : visites du site */
+.visit-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.visit-tiles .tile { background: #fff; border: 2px solid var(--ink); border-radius: 14px; padding: 12px; text-align: center; }
+.visit-tiles .tile b { display: block; font-family: 'Titan One', sans-serif; font-size: 2rem; color: var(--wine); line-height: 1.1; }
+.visit-tiles .tile span { display: block; font-weight: 700; font-size: .9rem; }
+.visit-tiles .tile small { color: var(--muted); font-size: .8rem; }
+.visit-days { display: flex; align-items: flex-end; gap: 6px; height: 150px; margin-top: 18px; }
+.visit-days .vd { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; min-width: 0; }
+.visit-days .bar { width: 100%; max-width: 28px; background: var(--wine); border-radius: 6px 6px 0 0; min-height: 2px; }
+.visit-days b { font-size: .75rem; margin-top: 2px; }
+.visit-days small { font-size: .62rem; color: var(--muted); white-space: nowrap; }
+@media (max-width: 640px) { .visit-tiles { grid-template-columns: repeat(2, 1fr); } .visit-days small { display: none; } }

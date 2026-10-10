@@ -60,6 +60,13 @@
       </div>
 
       <div class="card" style="margin-top:30px">
+        <h2>Visites du site</h2>
+        <p class="muted" style="margin-top:0">Une visite = une personne différente sur une journée. Les pages vues comptent chaque page ouverte.</p>
+        <div class="visit-tiles" id="visit-tiles"></div>
+        <div class="visit-days" id="visit-days"></div>
+      </div>
+
+      <div class="card" style="margin-top:30px">
         <h2>Avis des clients</h2>
         <p class="muted" style="margin-top:0">Clique sur ❤ pour afficher un message sur l'accueil (« Votre message qui nous touche le plus »). Un seul à la fois, re-clique pour l'enlever.</p>
         <div id="reviews"></div>
@@ -148,7 +155,19 @@
       <small class="muted">À ${esc(m.recipient)} · ${m.sent ? 'envoyé' : 'non envoyé (SMTP pas configuré)'}</small></span>
       <span class="note" style="white-space:pre-line">${esc(m.body)}</span></div>`).join('') || '<p class="muted">Aucun email.</p>';
     loadReviews();
+    loadStats();
     if (planning) planning.reload();
+  }
+
+  async function loadStats() {
+    const st = await api('/api/barber/stats');
+    const tile = (label, v) => `<div class="tile"><b>${v.visitors}</b><span>${label}</span><small>${v.views} page${v.views > 1 ? 's' : ''} vue${v.views > 1 ? 's' : ''}</small></div>`;
+    $('#visit-tiles').innerHTML = tile("Aujourd'hui", st.today) + tile('7 derniers jours', st.week) + tile('30 derniers jours', st.month) + tile('Depuis le début', st.total);
+    const byDay = Object.fromEntries(st.days.map((d) => [d.day, d.visitors]));
+    const list = [];
+    for (let i = 13; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const k = isoDay(d); list.push([d, byDay[k] || 0]); }
+    const max = Math.max(1, ...list.map((x) => x[1]));
+    $('#visit-days').innerHTML = list.map(([d, n]) => `<div class="vd" title="${n} visite${n > 1 ? 's' : ''}"><span class="bar" style="height:${Math.round(100 * n / max)}%"></span><b>${n}</b><small>${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'numeric' })}</small></div>`).join('');
   }
 
   async function loadReviews() {

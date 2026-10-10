@@ -94,7 +94,7 @@ const TEAM = {
     photos: [
       ['coupe10.jpg', 'Mid fade du soir'], ['coupe11.jpg', 'Taper bouclé'], ['coupe5.jpg', 'Texture naturelle'],
       ['coupe6.jpg', 'Mid fade + bière'], ['coupe8.jpg', 'Blond surfeur'], ['coupe9.jpg', 'Taper texturé'],
-      ['coupe2.jpg', 'Nuque nette'], ['coupe1.jpg', 'Taper blond platine'],
+      ['coupe2.jpg', 'Nuque nette'], ['coupe1.jpg', 'Taper blond platine'], ['coupe12.jpg', 'Texture courte'],
     ],
   },
   // Le remplaçant : affiché à part sur L'équipe, pas de prise de RDV

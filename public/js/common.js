@@ -53,7 +53,7 @@ const TEAM = {
     instaNote: 'Ajoute-le sur Pokémon Go plutôt',
     avatar: 'avatar-gatien.jpg',
     diploma: ['CAP Tonte de pelouse synthétique', 'Option : taille de haies en forme de dauphin'],
-    bio: "Gatien entretient une relation presque mystique avec la ligne droite. Ses contours sont si nets que les règles de la résidence viennent lui demander conseil. Il parle peu pendant la coupe : il se concentre (ou il dort debout, on n'a jamais tranché).",
+    bio: "Gatien a calculé que 95 % des étudiants loupaient leurs entretiens d'embauche à cause de leurs contours asymétriques. Depuis, il propose des tracés plus carrés que la pelouse du Parc des Princes. Il parle peu pendant la coupe : il se concentre (ou il dort debout, on n'a jamais tranché).",
     stats: [['Spécialité', 'Les contours au millimètre'], ['Outil préféré', 'Tondeuse de précision en or massif'], ['Temps moyen de coupe', '3 h 15 (avec débrief)'], ['Niveau de stress', 'Zéro, c’est lui qui tient la tondeuse']],
     debuts: {
       photo: 'carnage-gatien.jpg', caption: 'Coupe n°1 de Gatien · RIP',

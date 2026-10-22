@@ -97,6 +97,16 @@ const TEAM = {
       ['coupe2.jpg', 'Nuque nette'], ['coupe1.jpg', 'Taper blond platine'], ['coupe12.jpg', 'Texture courte'],
     ],
   },
+  // Prospect : ni titulaire ni remplaçant, affiché dans sa propre catégorie, pas de prise de RDV
+  olivia: {
+    name: 'Olivia', color: '#d9731f', prospect: true,
+    title: 'La relève',
+    fifa: { note: 74, stats: [['DÉG', 74], ['CTR', 70], ['VIT', 68], ['PAT', 88], ['TCH', 79], ['DIP', 0]] },
+    bio: "Olivia est la dernière recrue du club : période d'essai, tondeuse en main, sous l'œil attentif des titulaires. Les premières coupes sont déjà là, et les titulaires commencent à transpirer.",
+    stats: [['Statut', "En période d'essai"], ['Spécialité', 'Le dégradé bas et la couleur qui ose'], ['Outil préféré', 'La tondeuse et la décoloration'], ['Objectif', 'Passer titulaire avant la fin du semestre']],
+    soon: "Pas encore de casier capillaire. On surveille.",
+    photos: [['olivia1.jpg', ''], ['olivia2.jpg', '']],
+  },
   // Le remplaçant : affiché à part sur L'équipe, pas de prise de RDV
   gajelle: {
     name: 'Gajelle', color: '#7a3fa0', sub: true,

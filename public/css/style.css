@@ -523,6 +523,10 @@ textarea { min-height: 80px; resize: vertical; }
 .fifa.silver { background: linear-gradient(160deg, #ffffff 0%, #d7dde3 38%, #9aa5b1 70%, #e6eaee 100%); color: #26303a; }
 .fifa.silver .fifa-face { border-color: #26303a; }
 .fifa.silver .fifa-name { border-color: rgba(38,48,58,.4); }
+.fifa.bronze { background: linear-gradient(160deg, #f6d2a8 0%, #d08a4e 38%, #9a5a2a 70%, #e7b383 100%); color: #3a1e0a; }
+.fifa.bronze .fifa-face { border-color: #3a1e0a; }
+.fifa.bronze .fifa-name { border-color: rgba(58,30,10,.4); }
+.fifa.bronze .fifa-cta { color: #3a1e0a; }
 /* Photos teintées selon le barber (accueil) */
 .polaroid.tinted { background: color-mix(in srgb, var(--c) 24%, #fffaf3); }
 .polaroid.tinted figcaption { color: color-mix(in srgb, var(--c) 75%, #1d1416); }

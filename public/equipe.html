@@ -21,6 +21,8 @@
     <div class="fifa-row" id="cards"></div>
     <h2 class="squad-title">Le remplaçant</h2>
     <div class="fifa-row bench" id="subs"></div>
+    <h2 class="squad-title">Prospect</h2>
+    <div class="fifa-row bench" id="prospects"></div>
     <div id="team"></div>
   </div>
 </main>
@@ -41,19 +43,20 @@
 (() => {
   const root = $('#team');
   const stats = (b) => b.fifa.stats.map(([k, v]) => `<li><b>${v}</b> ${k}</li>`).join('');
+  const group = (b) => (b.sub ? '#subs' : b.prospect ? '#prospects' : '#cards');
   for (const [slug, b] of Object.entries(TEAM)) {
     const c = document.createElement('button');
-    c.className = b.sub ? 'fifa silver' : 'fifa';
+    c.className = b.sub ? 'fifa silver' : b.prospect ? 'fifa bronze' : 'fifa';
     c.dataset.slug = slug;
     c.style.setProperty('--c', b.color);
     c.innerHTML = `
-      <span class="fifa-top"><b>${b.fifa.note}</b><small>${b.sub ? 'REM' : 'BRB'}</small><img src="/img/favicon.png" alt=""></span>
+      <span class="fifa-top"><b>${b.fifa.note}</b><small>${b.sub ? 'REM' : b.prospect ? 'NEW' : 'BRB'}</small><img src="/img/favicon.png" alt=""></span>
       <span class="fifa-face">${b.avatar ? `<img src="/img/${b.avatar}" alt="">` : b.name[0]}</span>
       <span class="fifa-name">${b.name}</span>
       <ul class="fifa-stats">${stats(b)}</ul>
       <span class="fifa-cta">Voir la fiche</span>`;
     c.onclick = () => open(slug, true);
-    $(b.sub ? '#subs' : '#cards').appendChild(c);
+    $(group(b)).appendChild(c);
   }
 
   // Musique de la page : se lance dès l'arrivée. Si le navigateur bloque le son tant qu'on n'a pas
@@ -104,7 +107,7 @@
         ${b.snap ? `<a class="snap sticker" href="${snapUrl(b.snap)}" target="_blank" rel="noopener">👻 ${esc(b.snap)}${b.snapNote ? `<small>${esc(b.snapNote)}</small>` : ''}</a>` : ''}
         <p>${esc(b.bio)}</p>
         <ul class="stats">${b.stats.map(([k, v]) => `<li><span class="muted">${esc(k)}</span><b>${esc(v)}</b></li>`).join('')}</ul>
-        ${b.sub ? '' : `<p style="margin-top:18px"><a class="btn small" style="background:${b.color}" href="/rdv?barber=${slug}">RDV avec ${b.name}</a></p>`}
+        ${b.sub || b.prospect ? '' : `<p style="margin-top:18px"><a class="btn small" style="background:${b.color}" href="/rdv?barber=${slug}">RDV avec ${b.name}</a></p>`}
       </div>
       <div class="board-col"><div class="board"></div></div>`;
     const board = $('.board', el);
@@ -159,7 +162,7 @@
       root.innerHTML = '';
       document.querySelectorAll('.fifa').forEach((c) => c.classList.remove('active'));
       history.replaceState(null, '', location.pathname);
-      $(b.sub ? '#subs' : '#cards').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      $(group(b)).scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
     root.append(el, hist);
     if (scroll) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
